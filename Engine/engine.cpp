@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include <sstream>
 #include "engine.hpp"
 
 Engine::Engine(std::string fileDirectory) //mai mi trqbva samo default
@@ -23,9 +23,29 @@ std::string Engine::getFileNameFromDir(){
     return temp;
 }
 
+
+std::vector<std::string> Engine::split(std::string line)
+{
+    std::vector<std::string> result;
+
+    std::stringstream ss;
+    ss << line;
+    
+    std::string temp;
+    while(std::getline(ss, temp, ' '))
+    {
+        result.push_back(temp);
+    }
+
+    return result;
+}
+
 void Engine::open()
 {
-    std::cin >> fileDirectory;
+    std::cin.ignore();
+
+    std::getline(std::cin, fileDirectory);
+	
     fileName = getFileNameFromDir();
 
     std::ifstream file(fileDirectory);
@@ -33,18 +53,71 @@ void Engine::open()
     if (!file.is_open())
     {
         std::cerr << "Error opening file: " << fileName << std::endl;
+        return;
     }
 
     std::cout << "Successfully opened " << fileName << std::endl;
     
     std::string line;
+    Grammar currentGrammar;
 
     while(std::getline(file, line)){
-        std::cout << line << std::endl;
+        
+        std::vector<std::string> lineVector = split(line);
+        if(lineVector[0] == ";")
+        {
+            grammarList.push_back(currentGrammar);
+            Grammar newG;
+            currentGrammar = newG;
+        }
+        else if(lineVector[0] == "a")
+        {
+            for (size_t i = 1; i < lineVector.size(); i++)
+            {
+                if(lineVector[i].length() == 1){
+                    currentGrammar.addLetterToAlphabet(lineVector[i][0]);
+                }
+                
+            }
+        }
+        else if(lineVector[0] == "v")
+        {
+            for (size_t i = 1; i < lineVector.size(); i++)
+            {
+                if(lineVector[i].length() == 1){
+                    currentGrammar.addLetterToVariables(lineVector[i][0]);
+                }
+                
+            }
+        }
+        else if(lineVector[0] == "s")
+        {
+            if(lineVector[1].length() == 1){
+                currentGrammar.addStartVariable(lineVector[1][0]);
+            }
+        }
+
+        else if(lineVector[0] == "r")
+        {
+            Rule currentRule;
+            if(lineVector[1].length() == 1){
+                currentRule.setVariable(lineVector[1][0]);
+            }
+            if(currentRule.getVariable() != '\0')
+            {
+                for (size_t i = 2; i < lineVector.size(); i++)
+                {
+                    currentRule.addRule(lineVector[i]);
+                }
+                
+            }
+            currentGrammar.addRule(currentRule);
+        }
     }
     
     file.close();
-    
+
+    //print();
 }
 
 void Engine::help()
@@ -68,4 +141,14 @@ void Engine::help()
     std::endl << "iter <id>             sth" << 
     std::endl << "empty <id>            sth" << 
     std::endl << "chomskify <id>        sth" << std::endl;
+}
+
+void Engine::print()
+{
+    for (size_t i = 0; i < grammarList.size(); i++)
+    {
+        grammarList[i].print();
+        std::cout << "Next:" <<std::endl;
+    }
+   
 }

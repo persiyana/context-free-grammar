@@ -1,0 +1,12 @@
+a a b
+v S M
+s R
+r S aSb e
+r M aMaa
+;
+a a b
+v S X
+s S
+r S aXb e
+r X a b
+;
