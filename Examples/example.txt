@@ -1,5 +1,5 @@
 a a b
-v S M
+v M S
 s R
 r S aSb e
 r M aMaa

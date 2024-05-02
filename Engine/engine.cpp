@@ -6,18 +6,18 @@
 
 Engine::Engine(std::string fileDirectory) //mai mi trqbva samo default
 : fileDirectory(fileDirectory){
-    fileName = getFileNameFromDir();
+    fileName = getFileNameFromDir(fileDirectory);
 }
 
-std::string Engine::getFileNameFromDir(){
+std::string Engine::getFileNameFromDir(std::string fileDir){
     std::string temp = "";
-    for (size_t i = 0; i < fileDirectory.length(); i++)
+    for (size_t i = 0; i < fileDir.length(); i++)
     {
-        if(fileDirectory[i] == '\\'){
+        if(fileDir[i] == '\\'){
             temp = "";
         }
         else{
-            temp.push_back(fileDirectory[i]);
+            temp.push_back(fileDir[i]);
         }
     }
     return temp;
@@ -46,7 +46,7 @@ void Engine::open()
 
     std::getline(std::cin, fileDirectory);
 	
-    fileName = getFileNameFromDir();
+    fileName = getFileNameFromDir(fileDirectory);
 
     std::ifstream file(fileDirectory);
 
@@ -120,6 +120,31 @@ void Engine::open()
     //print();
 }
 
+void Engine::close()
+{
+    fileDirectory = "";
+    grammarList.clear();
+    std::cout << "Succesfully closed " << fileName << std::endl;
+    fileName = "";
+}
+
+void Engine::save()
+{
+    std::ofstream file(fileDirectory);
+    print(file);
+    file.close();
+    std::cout << "Successfully saved" << std::endl;
+}
+void Engine::saveAs()
+{
+    std::string newFile;
+    std::cin >> newFile;
+    std::ofstream file(newFile);
+    print(file);
+    file.close();
+    std::cout << "Successfully saved another " << getFileNameFromDir(newFile) << std::endl;
+}
+
 void Engine::help()
 {
     std::cout << "The following commands are supported:" <<
@@ -143,12 +168,19 @@ void Engine::help()
     std::endl << "chomskify <id>        sth" << std::endl;
 }
 
-void Engine::print()
+void Engine::print(std::ofstream& file)
 {
+    if (!file.is_open())
+	{
+		std::cerr << "File is not openE" << std::endl;
+		return ;
+	}
+
     for (size_t i = 0; i < grammarList.size(); i++)
     {
-        grammarList[i].print();
-        std::cout << "Next:" <<std::endl;
+        grammarList[i].print(file);
+        file << std::endl << ";" << std::endl;
     }
    
+    file.close();
 }

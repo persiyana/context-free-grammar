@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
+#include <fstream> 
 #include "../Rule/rule.hpp"
 
 class Grammar
@@ -10,7 +12,7 @@ public:
     void addLetterToAlphabet(char);
     void addLetterToVariables(char);
     void addStartVariable(char);
-    void print();
+    void print(std::ofstream&);
 private:
     bool alphabet[36]{false};
     bool variables[26]{false};

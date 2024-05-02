@@ -1,3 +1,5 @@
+#include <iostream>
+#include <fstream> 
 
 #include "grammar.hpp"
 
@@ -47,22 +49,48 @@ void Grammar::addRule(const Rule& rule){
     rules.push_back(rule);
 }
 
-void Grammar::print(){
+void Grammar::print(std::ofstream& file)
+{
+    
+    if (!file.is_open())
+	{
+		std::cerr << "File is not openG" << std::endl;
+		return ;
+	}
+
+    file << 'a';
     for (size_t i = 0; i < 36; i++)
     {
-        if(alphabet[i] ) std::cout << i << std::endl;
+        if(alphabet[i] )
+        {
+            char symbol;
+            if(i<10)
+            {
+                symbol = i+'0';
+            }
+            else
+            {
+                symbol = i-10+'a';
+            }
+            file << ' ' << symbol;
+        }
     }
 
+    file << std::endl << 'v';
     for (size_t i = 0; i < 26; i++)
     {
-        if(variables[i] ) std::cout << i << std::endl;
+        if(variables[i] )
+        {
+            file << ' ' << (char)(i+'A');
+        }
     }
 
-    std::cout << this->start_variable <<std::endl;
+    file << std::endl << 's' << ' ' << start_variable;
 
     for (size_t i = 0; i < rules.size(); i++)
     {
-        rules[i].print();
+        rules[i].print(file);
     }
-    
+
+    //file.close();
 }

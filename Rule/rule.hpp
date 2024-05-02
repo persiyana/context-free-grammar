@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <vector>
+#include <fstream> 
+
 
 class Rule
 {
@@ -11,7 +13,7 @@ public:
     void setVariable(char);
     char getVariable() { return variable;}
     void addRule(std::string);
-    void print();
+    void print(std::ofstream&);
 private:
     char variable = '\0';
     std::vector<std::string> rules;
