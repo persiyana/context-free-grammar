@@ -14,6 +14,7 @@ public:
     void saveAs();
     void help();
     void print(std::ofstream&);////////
+    void list();
     //void exit();
 private:
     std::string fileDirectory = "";

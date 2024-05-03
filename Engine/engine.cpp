@@ -23,7 +23,6 @@ std::string Engine::getFileNameFromDir(std::string fileDir){
     return temp;
 }
 
-
 std::vector<std::string> Engine::split(std::string line)
 {
     std::vector<std::string> result;
@@ -66,9 +65,9 @@ void Engine::open()
         std::vector<std::string> lineVector = split(line);
         if(lineVector[0] == ";")
         {
+            currentGrammar.setId();
             grammarList.push_back(currentGrammar);
-            Grammar newG;
-            currentGrammar = newG;
+            currentGrammar.clear();
         }
         else if(lineVector[0] == "a")
         {
@@ -183,4 +182,13 @@ void Engine::print(std::ofstream& file)
     }
    
     file.close();
+}
+
+void Engine::list()
+{
+    for (size_t i = 0; i < grammarList.size(); i++)
+    {
+        std::cout << grammarList[i].getId() << std::endl;
+    }
+    
 }

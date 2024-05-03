@@ -1,7 +1,46 @@
 #include <iostream>
 #include <fstream> 
-
+#include <string> 
 #include "grammar.hpp"
+
+unsigned Grammar::grammarsCount = 0;
+
+Grammar::Grammar()
+{
+    grammarsCount++;
+}
+
+Grammar::~Grammar()
+{
+    grammarsCount--;
+}
+
+void Grammar::setId()
+{
+    id = std::to_string(grammarsCount);
+    for (size_t i = 0; i < 26; i++)
+    {
+        if(variables[i])
+        {   
+            id += (i+'A');
+        }
+    }
+    
+}
+
+void Grammar::clear()
+{
+    id = "";
+    for (size_t i = 0; i < 36; i++)
+    {
+        alphabet[i] = false;
+        if(i<26){
+            variables[i] = false;
+        }
+    }
+    start_variable = '\0';
+    rules.clear();
+}
 
 void Grammar::addLetterToAlphabet(char letter)
 {

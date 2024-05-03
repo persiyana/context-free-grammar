@@ -31,6 +31,14 @@ int main()
         {
             engine.saveAs();
         }
+        else if(input == "list" && fileIsOpened)
+        {
+            engine.list();
+        }
+        else
+        {
+            std::cout << input <<" is invalid command" << std::endl;
+        }
         std::cin >> input;
     }
     
