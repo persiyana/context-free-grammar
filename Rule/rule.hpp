@@ -14,6 +14,7 @@ public:
     char getVariable() { return variable;}
     void addRule(std::string);
     void print(std::ofstream&);
+    void print();
 private:
     char variable = '\0';
     std::vector<std::string> rules;

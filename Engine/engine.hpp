@@ -17,6 +17,8 @@ public:
     void list();
     void print();
     void saveGrammar(std::string);
+    void removeRule();
+    void addRule();
     //void exit();
 private:
     std::string fileDirectory = "";

@@ -15,9 +15,11 @@ public:
     void addLetterToVariables(char);
     void addStartVariable(char);
     void print(std::ofstream&);
+    void print();
     void setId(unsigned);
     void clear();
     std::string getId() {return id;}
+    void removeRule(size_t);
     //static unsigned grammarsCount;
 private:
     std::string id = "";

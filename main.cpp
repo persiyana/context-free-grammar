@@ -39,6 +39,14 @@ int main()
         {
             engine.print();
         }
+        else if(input == "removeRule" && fileIsOpened)
+        {
+            engine.removeRule();
+        }
+        else if(input == "addRule" && fileIsOpened)
+        {
+            engine.addRule();
+        }
         else
         {
             std::cout << input <<" is invalid command" << std::endl;

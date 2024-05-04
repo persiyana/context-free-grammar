@@ -147,28 +147,27 @@ void Engine::save()
 void Engine::saveGrammar(std::string idAndFile)
 {
     std::vector<std::string> arr = split(idAndFile);
-    std::string searchedId = arr[0];
+    std::string searchedId = arr[1];
     size_t i = 0;
     while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
     {
         i++;
+        
     }
-    
     if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
     {
         std::cout << "Id not found" << std::endl;
     }
-
     else{
         std::string fileDir;
-        for (size_t i = 1; i < arr.size()-1; i++)
+        for (size_t i = 2; i < arr.size()-1; i++)
         {
            fileDir +=(arr[i] +' ');
         }
         fileDir+=arr[arr.size()-1];
-
         std::ofstream file(fileDir);
         grammarList[i].print(file);
+        std::cout << "Successfully saved " << getFileNameFromDir(fileDir) << std::endl;
     }
 }
 
@@ -191,18 +190,18 @@ void Engine::help()
     std::endl << "saveas <file>         saves the currently open file in <file>" << 
     std::endl << "help                  prints this information" << 
     std::endl << "exit                  exists the program" << 
-    std::endl << "list                  sth" << 
-    std::endl << "print <id>            sth" << 
-    std::endl << "save <id> <filename>  sth" << 
-    std::endl << "addRule <id> <rule>   sth" << 
-    std::endl << "removeRule <id> <n>   sth" << 
-    std::endl << "union <id1> <id2>     sth" << 
-    std::endl << "concat <id1> <id2>    sth" << 
-    std::endl << "chomsky <id>          sth" << 
-    std::endl << "cyk <id>              sth" << 
-    std::endl << "iter <id>             sth" << 
-    std::endl << "empty <id>            sth" << 
-    std::endl << "chomskify <id>        sth" << std::endl;
+    std::endl << "list                  list of the IDs of all grammars read" << 
+    std::endl << "print <id>            prints grammar with id <id>" << 
+    std::endl << "save <id> <filename>  saves grammar with id <id> in file <filename>" << 
+    std::endl << "addRule <id> <rule>   adds rule <rule> to grammar with id <id>" << 
+    std::endl << "removeRule <id> <n>   removes rule with number <n> from grammar with id <id>" << 
+    std::endl << "union <id1> <id2>     unites grammar with id <id1> and grammar with id <id2> and prints the id of the new grammar" << 
+    std::endl << "concat <id1> <id2>    concatenates grammar with id <id1> and grammar with id <id2> and prints the id of the new grammar" << 
+    std::endl << "chomsky <id>          checks whether grammar with id <id> is in Chomsky normal form" << 
+    std::endl << "cyk <id> <word>       checks if a word <word> is in the language of grammar with id <id>" << 
+    std::endl << "iter <id>             finds the result of operation 'iteration' over grammar with id <id> and prints the id of the new grammar" << 
+    std::endl << "empty <id>            checks if the language of grammar with id <id> is empty" << 
+    std::endl << "chomskify <id>        converts grammar with id <id> and prints the id of the new grammar" << std::endl;
 }
 
 void Engine::print(std::ofstream& file)
@@ -247,6 +246,57 @@ void Engine::print()
     }
     else
     {
-        //todo grammarList[i].print();
+        grammarList[i].print();
+    }
+}
+
+void Engine::removeRule()
+{
+    std::string searchedId;
+    size_t searchedNum;
+    std::cin >> searchedId >> searchedNum;
+    size_t i = 0;
+    while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
+    {
+        i++;
+    }
+    
+    if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
+    {
+        std::cout << "Id not found" << std::endl;
+    }
+    else
+    {
+        grammarList[i].removeRule(searchedNum);
+        std::cout << "Succesfully removed rule " << searchedNum << " from grammar " << searchedId <<std::endl;
+    }
+    
+}
+
+void Engine::addRule()
+{
+    std::string searchedId;
+    std::string newRule;
+    std::cin >> searchedId;
+    std::cin.ignore();
+    std::getline(std::cin, newRule);
+    size_t i = 0;
+    while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
+    {
+        i++;
+    }
+    
+    if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
+    {
+        std::cout << "Id not found" << std::endl;
+    }
+    else
+    {
+        std::vector<std::string> ruleVect = split(newRule);
+        char variable =  ruleVect[0][0];
+        ruleVect.erase(ruleVect.begin());
+        Rule newR(variable, ruleVect);
+        grammarList[i].addRule(newR);
+        std::cout << "Successfully added new rule" << std::endl;
     }
 }

@@ -35,3 +35,14 @@ void Rule::print(std::ofstream& file){
 
     //file.close();
 }
+
+void Rule::print(){
+
+    std::cout << " " << variable;
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        std::cout << " " <<rules[i];
+    }
+
+    //file.close();
+}

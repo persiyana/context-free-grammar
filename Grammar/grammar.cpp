@@ -134,3 +134,57 @@ void Grammar::print(std::ofstream& file)
 
     //file.close();
 }
+
+void Grammar::print()
+{
+
+    std::cout  << 'a';
+    for (size_t i = 0; i < 36; i++)
+    {
+        if(alphabet[i] )
+        {
+            char symbol;
+            if(i<10)
+            {
+                symbol = i+'0';
+            }
+            else
+            {
+                symbol = i-10+'a';
+            }
+            std::cout  << ' ' << symbol;
+        }
+    }
+
+    std::cout  << std::endl << 'v';
+    for (size_t i = 0; i < 26; i++)
+    {
+        if(variables[i] )
+        {
+            std::cout  << ' ' << (char)(i+'A');
+        }
+    }
+
+    std::cout << std::endl << 's' << ' ' << start_variable;
+
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        std::cout << std::endl <<"r"<< i; 
+        rules[i].print();
+    }
+    std::cout << std::endl;
+    //file.close();
+}
+
+void Grammar::removeRule(size_t index)
+{
+    
+    if(rules.size() < index)
+    {
+        std::cout << "Grammar " << id << " does not contain rule " << index <<std::endl;
+    }
+    else
+    {
+        rules.erase(rules.begin() + index);
+    }
+}
