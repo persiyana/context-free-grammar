@@ -35,6 +35,10 @@ int main()
         {
             engine.list();
         }
+        else if(input == "print" && fileIsOpened)
+        {
+            engine.print();
+        }
         else
         {
             std::cout << input <<" is invalid command" << std::endl;

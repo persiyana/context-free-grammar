@@ -15,6 +15,8 @@ public:
     void help();
     void print(std::ofstream&);////////
     void list();
+    void print();
+    void saveGrammar(std::string);
     //void exit();
 private:
     std::string fileDirectory = "";

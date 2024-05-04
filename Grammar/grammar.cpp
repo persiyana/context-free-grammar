@@ -3,6 +3,7 @@
 #include <string> 
 #include "grammar.hpp"
 
+/*
 unsigned Grammar::grammarsCount = 0;
 
 Grammar::Grammar()
@@ -14,10 +15,10 @@ Grammar::~Grammar()
 {
     grammarsCount--;
 }
-
-void Grammar::setId()
+*/
+void Grammar::setId(unsigned number)
 {
-    id = std::to_string(grammarsCount);
+    id = std::to_string(number+1);
     for (size_t i = 0; i < 26; i++)
     {
         if(variables[i])

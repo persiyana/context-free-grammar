@@ -8,17 +8,17 @@
 class Grammar
 {
 public: 
-    Grammar();
-    ~Grammar();
+    //Grammar();
+    //~Grammar();
     void addRule(const Rule&);
     void addLetterToAlphabet(char);
     void addLetterToVariables(char);
     void addStartVariable(char);
     void print(std::ofstream&);
-    void setId();
+    void setId(unsigned);
     void clear();
     std::string getId() {return id;}
-    static unsigned grammarsCount;
+    //static unsigned grammarsCount;
 private:
     std::string id = "";
     bool alphabet[36]{false};
