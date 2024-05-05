@@ -46,3 +46,14 @@ void Rule::print(){
 
     //file.close();
 }
+
+bool Rule::containsE(){
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        if(rules[i] == "e"){
+            return true;
+        }
+    }
+    return false;
+    
+}

@@ -20,6 +20,7 @@ public:
     void clear();
     std::string getId() {return id;}
     void removeRule(size_t);
+    bool containsE();
     //static unsigned grammarsCount;
 private:
     std::string id = "";

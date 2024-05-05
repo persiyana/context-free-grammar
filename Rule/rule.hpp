@@ -15,6 +15,7 @@ public:
     void addRule(std::string);
     void print(std::ofstream&);
     void print();
+    bool containsE();
 private:
     char variable = '\0';
     std::vector<std::string> rules;

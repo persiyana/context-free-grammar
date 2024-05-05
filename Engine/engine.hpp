@@ -19,6 +19,8 @@ public:
     void saveGrammar(std::string);
     void removeRule();
     void addRule();
+    void chomsky();
+    bool grammarContainsId(std::string);
     //void exit();
 private:
     std::string fileDirectory = "";

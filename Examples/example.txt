@@ -7,6 +7,6 @@ r M aMaa
 a a b
 v S X
 s S
-r S aXb e
+r S aXb
 r X a b
 ;

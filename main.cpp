@@ -47,6 +47,10 @@ int main()
         {
             engine.addRule();
         }
+        else if(input == "chomsky" && fileIsOpened)
+        {
+            engine.chomsky();
+        }
         else
         {
             std::cout << input <<" is invalid command" << std::endl;

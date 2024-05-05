@@ -188,3 +188,14 @@ void Grammar::removeRule(size_t index)
         rules.erase(rules.begin() + index);
     }
 }
+
+bool Grammar::containsE()
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+       if(rules[i].containsE()){
+        return true;
+       }
+    }
+    return false;
+}

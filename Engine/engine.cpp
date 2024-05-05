@@ -300,3 +300,38 @@ void Engine::addRule()
         std::cout << "Successfully added new rule" << std::endl;
     }
 }
+
+void Engine::chomsky()
+{
+    std::string searchedId;
+    std::cin >> searchedId;
+
+    size_t i = 0;
+    while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
+    {
+        i++;
+    }
+    
+    if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
+    {
+        std::cout << "Id not found" << std::endl;
+    }
+    else
+    {
+        if(grammarList[i].containsE())
+        {
+            std::cout << "This grammar is not in Chomsky normal form" << std::endl;
+        }
+        else
+        {
+            std::cout << "This grammar is in Chomsky normal form" << std::endl;
+        }
+    }
+}
+
+bool Engine::grammarContainsId(std::string searchedId)
+{
+    
+
+    return true;
+}
