@@ -7,6 +7,10 @@
 
 #include "../Rule/rule.hpp"
 
+constexpr size_t ALPHABET_SIZE = 36;
+constexpr size_t VARIABLES_SIZE = 26;
+constexpr size_t DIGITS_COUNT = 10;
+
 class Grammar
 {
 public: 
@@ -24,8 +28,8 @@ public:
     char getStartVariable() const;
 private:
     std::string id = "";
-    bool alphabet[36]{false};
-    bool variables[26]{false};
+    bool alphabet[ALPHABET_SIZE]{false};
+    bool variables[VARIABLES_SIZE]{false};
     char start_variable = '\0';
     std::vector<Rule> rules;
     

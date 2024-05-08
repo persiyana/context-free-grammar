@@ -10,7 +10,7 @@ std::string Grammar::getId() const
 void Grammar::setId()
 {
     id = std::to_string(grammarsCount);
-    for (size_t i = 0; i < 26; i++)
+    for (size_t i = 0; i < VARIABLES_SIZE; i++)
     {
         if(variables[i])
         {   
@@ -22,10 +22,10 @@ void Grammar::setId()
 void Grammar::clear()
 {
     id = "";
-    for (size_t i = 0; i < 36; i++)
+    for (size_t i = 0; i < ALPHABET_SIZE; i++)
     {
         alphabet[i] = false;
-        if(i<26){
+        if(i<VARIABLES_SIZE){
             variables[i] = false;
         }
     }
@@ -41,7 +41,7 @@ void Grammar::addLetterToAlphabet(char letter)
 	}
 	else if (letter >= 'a' && letter <= 'z')
 	{
-		this->alphabet[letter - 'a' + 10] = true;
+		this->alphabet[letter - 'a' + DIGITS_COUNT] = true;
 	}
 }
 
@@ -71,25 +71,25 @@ void Grammar::display(std::ostream& file) const
 {
 
     file << 'a';
-    for (size_t i = 0; i < 36; i++)
+    for (size_t i = 0; i < ALPHABET_SIZE; i++)
     {
         if(alphabet[i] )
         {
             char symbol;
-            if(i<10)
+            if(i<DIGITS_COUNT)
             {
                 symbol = i+'0';
             }
             else
             {
-                symbol = i-10+'a';
+                symbol = i-DIGITS_COUNT+'a';
             }
             file << ' ' << symbol;
         }
     }
 
     file << std::endl << 'v';
-    for (size_t i = 0; i < 26; i++)
+    for (size_t i = 0; i < VARIABLES_SIZE; i++)
     {
         if(variables[i] )
         {
@@ -132,7 +132,7 @@ bool Grammar::containsE() const
 
 char Grammar::getUnusedVariable() const
 {
-    for (size_t i = 0; i < 26; i++)
+    for (size_t i = 0; i < VARIABLES_SIZE; i++)
     {
         if(!variables[i])
         {
