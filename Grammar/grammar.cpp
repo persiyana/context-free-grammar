@@ -1,12 +1,15 @@
 #include "grammar.hpp"
 
+unsigned Grammar::grammarsCount = 0;
+
+
 std::string Grammar::getId() const 
 {
     return id;
 }
-void Grammar::setId(unsigned number)
+void Grammar::setId()
 {
-    id = std::to_string(number+1);
+    id = std::to_string(grammarsCount);
     for (size_t i = 0; i < 26; i++)
     {
         if(variables[i])
@@ -14,7 +17,6 @@ void Grammar::setId(unsigned number)
             id += (i+'A');
         }
     }
-    
 }
 
 void Grammar::clear()
@@ -53,6 +55,8 @@ void Grammar::addLetterToVariables(char letter)
 
 void Grammar::addStartVariable(char letter)
 {
+    grammarsCount++;
+    setId(); 
     if(letter >= 'A' && letter <= 'Z')
     {
         start_variable = letter;

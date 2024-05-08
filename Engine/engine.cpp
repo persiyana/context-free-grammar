@@ -163,7 +163,6 @@ std::string Engine::open(const std::string& fileDir)
         std::vector<std::string> lineVector = HelperFunctions::split(line);
         if(lineVector[0] == ";")
         {
-            currentGrammar.setId(grammarList.size());
             grammarList.push_back(currentGrammar);
             currentGrammar.clear();
         }
