@@ -33,13 +33,14 @@ private:
     std::string saveGrammar(const std::string& id, const std::string& fileDirectory) const;
     std::string addRule(const std::string& id, const Rule& rule);
     std::string removeRule(const std::string& id, size_t number);
-    void unite(const std::string& id1, const std::string& id2);
-    void concat(const std::string& id1, const std::string& id2);
+    std::string unite(const std::string& id1, const std::string& id2);
+    std::string concat(const std::string& id1, const std::string& id2);
     std::string chomsky(const std::string& id) const;
     void cyk(const std::string& id) const;
-    void iter(const std::string& id);
+    std::string iter(const std::string& id);
     void empty(const std::string& id) const;
-    void chomskify(const std::string& id);
+    std::string chomskify(const std::string& id);
 
     int indexOfId(const std::string& id) const;
+    char unusedVariable(size_t) const;
 };

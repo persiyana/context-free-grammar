@@ -130,3 +130,19 @@ bool Grammar::containsE() const
     return false;
 }
 
+char Grammar::getUnusedVariable() const
+{
+    for (size_t i = 0; i < 26; i++)
+    {
+        if(!variables[i])
+        {
+            return i + 'A';
+        }
+    }
+    return ' ';
+}
+
+char Grammar::getStartVariable() const
+{
+    return start_variable;
+}

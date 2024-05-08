@@ -62,7 +62,7 @@ void Engine::run()
         }
         else if(input == "chomskify" && fileIsOpened)
         {
-            chomskify(args[0]);
+            std::cout << chomskify(args[0]);
         }
         else if(input == "cyk" && fileIsOpened)
         {
@@ -70,7 +70,7 @@ void Engine::run()
         }
         else if(input == "iter" && fileIsOpened)
         {
-            iter(args[0]);
+            std::cout << iter(args[0]) << std::endl;
         }
         else if(input == "empty" && fileIsOpened)
         {
@@ -79,11 +79,11 @@ void Engine::run()
         //the arguments are two id's:
         else if(input == "union" && fileIsOpened)
         {
-            unite(args[0], args[1]);
+            std::cout << unite(args[0], args[1]);
         }
         else if(input == "concat" && fileIsOpened)
         {
-            concat(args[0], args[1]);
+            std::cout << concat(args[0], args[1]);
         }
         //the arguments are id and new rule:
         else if(input == "addRule" && fileIsOpened)
@@ -366,27 +366,94 @@ int Engine::indexOfId(const std::string& id) const
     return i;
 }
 
-void Engine::unite(const std::string& id1, const std::string& id2)
+char Engine::unusedVariable(size_t index) const
 {
+    char unused = ' ';
 
+    unused = grammarList[index].getUnusedVariable();
+    
+    return unused;
 }
-void Engine::concat(const std::string& id1, const std::string& id2)
-{
 
+std::string Engine::unite(const std::string& id1, const std::string& id2) //U
+{
+    int index1 = indexOfId(id1);
+    int index2 = indexOfId(id2);
+    
+    if(index1 == -1 || index1 == -1) 
+    {
+        return "One or both of id's were not found\n";
+    }
+    else
+    {
+        
+    }
+}
+std::string Engine::concat(const std::string& id1, const std::string& id2) //.
+{
+    int index1 = indexOfId(id1);
+    int index2 = indexOfId(id2);
+    
+    if(index1 == -1 || index1 == -1) 
+    {
+        return "One or both of id's were not found\n";
+    }
+    else
+    {
+        
+    }
 }
 void Engine::cyk(const std::string& id) const
 {
 
 }
-void Engine::iter(const std::string& id)
+std::string Engine::iter(const std::string& id) //*
 {
+    int index = indexOfId(id);
+    
+    if(index == -1) 
+    {
+        return "Id not found";
+    }
+    else
+    {
+        char unused = unusedVariable(index);
+        std::string newId = "";
+        if(unused != ' ')
+        {
+            Grammar iter = grammarList[index];
+            
+            iter.addLetterToVariables(unused);
+            std::vector<std::string> varRules;
+            varRules.push_back("epsilon");
+            std::string rule;
+            rule.push_back(grammarList[index].getStartVariable());
+            rule.push_back(unused);
+            varRules.push_back(rule);
+            iter.addStartVariable(unused);
+            Rule newRule(unused, varRules);
+            iter.addRule(newRule);
 
+            grammarList.push_back(iter);
+            newId = iter.getId();
+        }
+        return newId;
+    }
 }
 void Engine::empty(const std::string& id) const
 {
 
 }
-void Engine::chomskify(const std::string& id)
+std::string Engine::chomskify(const std::string& id)
 {
+    int index = indexOfId(id);
+    
+    if(index == -1) 
+    {
+        return "Id not found\n";
+    }
+    else
+    {
 
+    }
 }

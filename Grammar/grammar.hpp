@@ -20,6 +20,8 @@ public:
     void removeRule(size_t);
     bool containsE() const;
     static unsigned grammarsCount;
+    char getUnusedVariable() const;
+    char getStartVariable() const;
 private:
     std::string id = "";
     bool alphabet[36]{false};
