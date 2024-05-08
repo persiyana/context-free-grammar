@@ -4,60 +4,7 @@
 
 int main()
 {
-    std::string input;
-    bool fileIsOpened = false;
-    std::cin >> input;
     Engine engine;
-    while(input != "exit")
-    {
-        if(input == "help")
-        {
-            engine.help();
-        }
-        else if(input == "open")
-        {
-            engine.open();
-            fileIsOpened = true;
-        }
-        else if(input == "close" && fileIsOpened)
-        {
-            engine.close();
-        }
-        else if(input == "save" && fileIsOpened)
-        {
-            engine.save();
-        }
-        else if(input == "saveas" && fileIsOpened)
-        {
-            engine.saveAs();
-        }
-        else if(input == "list" && fileIsOpened)
-        {
-            engine.list();
-        }
-        else if(input == "print" && fileIsOpened)
-        {
-            engine.print();
-        }
-        else if(input == "removeRule" && fileIsOpened)
-        {
-            engine.removeRule();
-        }
-        else if(input == "addRule" && fileIsOpened)
-        {
-            engine.addRule();
-        }
-        else if(input == "chomsky" && fileIsOpened)
-        {
-            engine.chomsky();
-        }
-        else
-        {
-            std::cout << input <<" is invalid command" << std::endl;
-        }
-        std::cin >> input;
-    }
-    
-    std::cout << "Exiting the program...";
+    engine.run();
 }
 

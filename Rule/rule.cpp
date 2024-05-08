@@ -1,9 +1,13 @@
-
 #include "rule.hpp"
 
 Rule::Rule(char variable, std::vector<std::string> rules)
-:  variable(variable), rules(rules)
+:  variable(variable), rules(rules) //todo validation
 {}
+
+char Rule::getVariable() const 
+{ 
+    return variable;
+}
 
 void Rule::setVariable(char letter)
 {
@@ -17,43 +21,21 @@ void Rule::setVariable(char letter)
 void Rule::addRule(std::string rule) //todo validation
 {
     rules.push_back(rule);
+    if(rule=="epsilon")
+    {
+        hasEpsilon = true;
+    }
 }
 
-void Rule::print(std::ofstream& file){
+void Rule::display(std::ostream& file) const{
 
-    if (!file.is_open())
-	{
-		std::cerr << "File is not openR" << std::endl;
-		return ;
-	}
-    
-    file << std::endl << "r " << variable;
     for (size_t i = 0; i < rules.size(); i++)
     {
         file<< " " <<rules[i];
     }
 
-    //file.close();
 }
 
-void Rule::print(){
-
-    std::cout << " " << variable;
-    for (size_t i = 0; i < rules.size(); i++)
-    {
-        std::cout << " " <<rules[i];
-    }
-
-    //file.close();
-}
-
-bool Rule::containsE(){
-    for (size_t i = 0; i < rules.size(); i++)
-    {
-        if(rules[i] == "e"){
-            return true;
-        }
-    }
-    return false;
-    
+bool Rule::containsE() const{
+    return hasEpsilon;
 }

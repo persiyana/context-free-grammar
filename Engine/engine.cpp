@@ -1,68 +1,166 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 #include "engine.hpp"
 
-Engine::Engine(std::string fileDirectory) //mai mi trqbva samo default
-: fileDirectory(fileDirectory){
-    fileName = getFileNameFromDir(fileDirectory);
-}
-
-std::string Engine::getFileNameFromDir(std::string fileDir){
-    std::string temp = "";
-    for (size_t i = 0; i < fileDir.length(); i++)
-    {
-        if(fileDir[i] == '\\'){
-            temp = "";
-        }
-        else{
-            temp.push_back(fileDir[i]);
-        }
-    }
-    return temp;
-}
-
-std::vector<std::string> Engine::split(std::string line)
+void Engine::run()
 {
-    std::vector<std::string> result;
-
-    std::stringstream ss;
-    ss << line;
+    std::string input, arguments;
+    bool fileIsOpened = false;
+    std::cin >> input;
     
-    std::string temp;
-    while(std::getline(ss, temp, ' '))
-    {
-        result.push_back(temp);
-    }
+    std::getline(std::cin, arguments);
+    
 
-    return result;
+    while(input != "exit")
+    {   
+        
+        std::vector<std::string> args = HelperFunctions::split(arguments, ' '); 
+        //without arguments:
+        if(input == "help") 
+        {   
+            help();
+        }
+        else if(input == "close" && fileIsOpened)
+        {
+            std::cout << close();
+            fileIsOpened = false;
+        }
+        else if(input == "list" && fileIsOpened)
+        {
+            list();
+        } 
+        //has either no arguments or arguments for id and filename
+        else if(input == "save" && fileIsOpened)
+        {
+            if(args.size() == 0)
+            {
+                std::cout << save();
+            }
+            else
+            {
+                std::string id = args[0];
+                args.erase(args.begin());
+                std::cout << saveGrammar(id, HelperFunctions::uniteVector(args, ' '));
+            }
+        }
+        //the argument is a file directory:
+        else if(input == "open")
+        {
+            std::cout << open(HelperFunctions::uniteVector(args, ' '));
+            fileIsOpened = true;
+        }
+        else if(input == "saveas" && fileIsOpened)
+        {
+            std::cout << saveAs(HelperFunctions::uniteVector(args, ' '));
+        }
+        //the argument is one id:
+        else if(input == "print" && fileIsOpened)
+        {
+            print(args[0]);
+        }
+        else if(input == "chomsky" && fileIsOpened)
+        {
+            std::cout << chomsky(args[0]);
+        }
+        else if(input == "chomskify" && fileIsOpened)
+        {
+            chomskify(args[0]);
+        }
+        else if(input == "cyk" && fileIsOpened)
+        {
+            cyk(args[0]);
+        }
+        else if(input == "iter" && fileIsOpened)
+        {
+            iter(args[0]);
+        }
+        else if(input == "empty" && fileIsOpened)
+        {
+            empty(args[0]);
+        }
+        //the arguments are two id's:
+        else if(input == "union" && fileIsOpened)
+        {
+            unite(args[0], args[1]);
+        }
+        else if(input == "concat" && fileIsOpened)
+        {
+            concat(args[0], args[1]);
+        }
+        //the arguments are id and new rule:
+        else if(input == "addRule" && fileIsOpened)
+        {
+            std::string id = args[0];
+            std::string variable = args[1];
+            args.erase(args.begin());
+            args.erase(args.begin());
+
+            if(variable.size() > 1) {
+                std::cout << "The variable for this rule would be only `" << variable[0] << "`" << std::endl;
+            }
+            Rule newRule(variable[0], args);
+
+            std::cout << addRule(id, newRule);
+        }
+        //the arguments are id and a number of a rule:
+        else if(input == "removeRule" && fileIsOpened)
+        {
+            size_t number = std::stoul(args[1]);
+            std::cout << removeRule(args[0], number);
+        }
+        else
+        {
+            std::cout << input <<" is invalid command" << std::endl;
+        }
+        std::cin >> input;
+        std::getline(std::cin, arguments);
+    }
+    
+    std::cout << "Exiting the program...";
 }
 
-void Engine::open()
+void Engine::help() const
 {
-    std::cin.ignore();
+    std::cout << "The following commands are supported:" <<
+    std::endl << "open <file>           opens <file>" <<
+    std::endl << "close                 closes currently opened file" << 
+    std::endl << "save                  saves the currently open file" << 
+    std::endl << "saveas <file>         saves the currently open file in <file>" << 
+    std::endl << "help                  prints this information" << 
+    std::endl << "exit                  exists the program" << 
+    std::endl << "list                  list of the IDs of all grammars read" << 
+    std::endl << "print <id>            prints grammar with id <id>" << 
+    std::endl << "save <id> <filename>  saves grammar with id <id> in file <filename>" << 
+    std::endl << "addRule <id> <rule>   adds rule <rule> to grammar with id <id>" << 
+    std::endl << "removeRule <id> <n>   removes rule with number <n> from grammar with id <id>" << 
+    std::endl << "union <id1> <id2>     unites grammar with id <id1> and grammar with id <id2> and prints the id of the new grammar" << 
+    std::endl << "concat <id1> <id2>    concatenates grammar with id <id1> and grammar with id <id2> and prints the id of the new grammar" << 
+    std::endl << "chomsky <id>          checks whether grammar with id <id> is in Chomsky normal form" << 
+    std::endl << "cyk <id> <word>       checks if a word <word> is in the language of grammar with id <id>" << 
+    std::endl << "iter <id>             finds the result of operation 'iteration' over grammar with id <id> and prints the id of the new grammar" << 
+    std::endl << "empty <id>            checks if the language of grammar with id <id> is empty" << 
+    std::endl << "chomskify <id>        converts grammar with id <id> and prints the id of the new grammar" << std::endl;
+}
 
-    std::getline(std::cin, fileDirectory);
-	
-    fileName = getFileNameFromDir(fileDirectory);
+std::string Engine::open(const std::string& fileDir)
+{	
+    fileDirectory = fileDir;
+
+    fileName = HelperFunctions::getFileNameFromDir(fileDirectory);
 
     std::ifstream file(fileDirectory);
 
     if (!file.is_open())
     {
-        std::cerr << "Error opening file: " << fileName << std::endl;
-        return;
+        return "Error opening file: " + fileName + '\n';
     }
 
-    std::cout << "Successfully opened " << fileName << std::endl;
+    
     
     std::string line;
     Grammar currentGrammar;
 
     while(std::getline(file, line)){
         
-        std::vector<std::string> lineVector = split(line);
+        std::vector<std::string> lineVector = HelperFunctions::split(line);
         if(lineVector[0] == ";")
         {
             currentGrammar.setId(grammarList.size());
@@ -96,7 +194,7 @@ void Engine::open()
             }
         }
 
-        else if(lineVector[0] == "r")
+        else if(lineVector[0][0] == 'r')
         {
             Rule currentRule;
             if(lineVector[1].length() == 1){
@@ -116,112 +214,69 @@ void Engine::open()
     
     file.close();
 
-    //print();
+    return "Successfully opened " + fileName +'\n';
 }
 
-void Engine::close()
+std::string Engine::close()
 {
     fileDirectory = "";
     grammarList.clear();
-    std::cout << "Succesfully closed " << fileName << std::endl;
+    std::string result = "Succesfully closed " + fileName + '\n';
     fileName = "";
+    return result;
 }
 
-void Engine::save()
+std::string Engine::save() const
 {
-    std::string grammar;
-    std::getline(std::cin, grammar);
-    if(grammar.length() == 0)
-    {
-       std::ofstream file(fileDirectory);
-        print(file);
-        file.close();
-        std::cout << "Successfully saved" << std::endl; 
-    }
-    else
-    {
-        saveGrammar(grammar);
-    }
+    saveAs(fileDirectory);
+    return "Successfully saved\n";
 }
 
-void Engine::saveGrammar(std::string idAndFile)
+std::string Engine::saveGrammar(const std::string& id, const std::string& fileDir) const
 {
-    std::vector<std::string> arr = split(idAndFile);
-    std::string searchedId = arr[1];
-    size_t i = 0;
-    while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
+    int index = indexOfId(id);
+    
+    if(index == -1) 
     {
-        i++;
-        
-    }
-    if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
-    {
-        std::cout << "Id not found" << std::endl;
+        return "Id not found" + '\n';
     }
     else{
-        std::string fileDir;
-        for (size_t i = 2; i < arr.size()-1; i++)
-        {
-           fileDir +=(arr[i] +' ');
-        }
-        fileDir+=arr[arr.size()-1];
         std::ofstream file(fileDir);
-        grammarList[i].print(file);
-        std::cout << "Successfully saved " << getFileNameFromDir(fileDir) << std::endl;
+        if (!file.is_open())
+        {
+            return "File is not open\n";
+        }
+        grammarList[index].display(file);
+        file << std::endl << ';';
+        file.close();
+        return "Successfully saved " +  HelperFunctions::getFileNameFromDir(fileDir) + '\n';
     }
 }
 
-void Engine::saveAs()
+std::string Engine::saveAs(const std::string& fileDir) const
 {
-    std::string newFile;
-    std::cin >> newFile;
-    std::ofstream file(newFile);
-    print(file);
-    file.close();
-    std::cout << "Successfully saved another " << getFileNameFromDir(newFile) << std::endl;
-}
-
-void Engine::help()
-{
-    std::cout << "The following commands are supported:" <<
-    std::endl << "open <file>           opens <file>" <<
-    std::endl << "close                 closes currently opened file" << 
-    std::endl << "save                  saves the currently open file" << 
-    std::endl << "saveas <file>         saves the currently open file in <file>" << 
-    std::endl << "help                  prints this information" << 
-    std::endl << "exit                  exists the program" << 
-    std::endl << "list                  list of the IDs of all grammars read" << 
-    std::endl << "print <id>            prints grammar with id <id>" << 
-    std::endl << "save <id> <filename>  saves grammar with id <id> in file <filename>" << 
-    std::endl << "addRule <id> <rule>   adds rule <rule> to grammar with id <id>" << 
-    std::endl << "removeRule <id> <n>   removes rule with number <n> from grammar with id <id>" << 
-    std::endl << "union <id1> <id2>     unites grammar with id <id1> and grammar with id <id2> and prints the id of the new grammar" << 
-    std::endl << "concat <id1> <id2>    concatenates grammar with id <id1> and grammar with id <id2> and prints the id of the new grammar" << 
-    std::endl << "chomsky <id>          checks whether grammar with id <id> is in Chomsky normal form" << 
-    std::endl << "cyk <id> <word>       checks if a word <word> is in the language of grammar with id <id>" << 
-    std::endl << "iter <id>             finds the result of operation 'iteration' over grammar with id <id> and prints the id of the new grammar" << 
-    std::endl << "empty <id>            checks if the language of grammar with id <id> is empty" << 
-    std::endl << "chomskify <id>        converts grammar with id <id> and prints the id of the new grammar" << std::endl;
-}
-
-void Engine::print(std::ofstream& file)
-{
+    std::ofstream file(fileDir);
     if (!file.is_open())
 	{
-		std::cerr << "File is not openE" << std::endl;
-		return ;
+		return "File is not open\n";
 	}
+    display(file);
+    file.close();
+    return "Successfully saved another " + HelperFunctions::getFileNameFromDir(fileDir) +"\n";
+}
+
+void Engine::display(std::ostream& file) const
+{
 
     for (size_t i = 0; i < grammarList.size(); i++)
     {
-        grammarList[i].print(file);
+        grammarList[i].display(file);
         file << std::endl << ";" << std::endl;
     }
    
-    file.close();
 }
 
-void Engine::list()
+void Engine::list() const
 {
     for (size_t i = 0; i < grammarList.size(); i++)
     {
@@ -230,108 +285,109 @@ void Engine::list()
     
 }
 
-void Engine::print()
+void Engine::print(const std::string& id) const
 {
-    std::string searchedId;
-    std::cin >> searchedId;
-    size_t i = 0;
-    while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
-    {
-        i++;
-    }
+    int index = indexOfId(id);
     
-    if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
+    if(index == -1) 
     {
         std::cout << "Id not found" << std::endl;
     }
     else
     {
-        grammarList[i].print();
+        grammarList[index].display();
+        std::cout << std::endl;
     }
 }
 
-void Engine::removeRule()
+std::string Engine::removeRule(const std::string& id, size_t number)
 {
-    std::string searchedId;
-    size_t searchedNum;
-    std::cin >> searchedId >> searchedNum;
-    size_t i = 0;
-    while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
-    {
-        i++;
-    }
+    int index = indexOfId(id);
     
-    if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
+    if(index == -1) 
     {
-        std::cout << "Id not found" << std::endl;
+        return "Id not found\n";
     }
     else
     {
-        grammarList[i].removeRule(searchedNum);
-        std::cout << "Succesfully removed rule " << searchedNum << " from grammar " << searchedId <<std::endl;
+        grammarList[index].removeRule(number);
+        return "Succesfully removed rule " + std::to_string(number) + " from grammar " + id + '\n';
     }
     
 }
 
-void Engine::addRule()
+std::string Engine::addRule(const std::string& id, const Rule& rule)
 {
-    std::string searchedId;
-    std::string newRule;
-    std::cin >> searchedId;
-    std::cin.ignore();
-    std::getline(std::cin, newRule);
-    size_t i = 0;
-    while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
-    {
-        i++;
-    }
+    int index = indexOfId(id);
     
-    if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
+    if(index == -1) 
     {
-        std::cout << "Id not found" << std::endl;
+        return "Id not found\n";
     }
     else
     {
-        std::vector<std::string> ruleVect = split(newRule);
-        char variable =  ruleVect[0][0];
-        ruleVect.erase(ruleVect.begin());
-        Rule newR(variable, ruleVect);
-        grammarList[i].addRule(newR);
-        std::cout << "Successfully added new rule" << std::endl;
+        grammarList[index].addRule(rule);
+        return "Successfully added new rule\n";
     }
 }
 
-void Engine::chomsky()
+std::string Engine::chomsky(const std::string& id) const
 {
-    std::string searchedId;
-    std::cin >> searchedId;
-
-    size_t i = 0;
-    while ( i < grammarList.size() && grammarList[i].getId()!=searchedId)
-    {
-        i++;
-    }
+    int index = indexOfId(id);
     
-    if(i == grammarList.size() && grammarList[i].getId()!=searchedId) 
+    if(index == -1) 
     {
-        std::cout << "Id not found" << std::endl;
+        return "Id not found\n";
     }
     else
     {
-        if(grammarList[i].containsE())
+        if(grammarList[index].containsE())
         {
-            std::cout << "This grammar is not in Chomsky normal form" << std::endl;
+            return "This grammar is not in Chomsky normal form\n";
         }
         else
         {
-            std::cout << "This grammar is in Chomsky normal form" << std::endl;
+            return "This grammar is in Chomsky normal form\n";
         }
     }
 }
 
-bool Engine::grammarContainsId(std::string searchedId)
+int Engine::indexOfId(const std::string& id) const
 {
+    size_t i = 0;
+    while ( i < grammarList.size() && grammarList[i].getId()!=id)
+    {
+        i++;
+    }
     
+    if(i == grammarList.size() && grammarList[i].getId()!=id) 
+    {
+       return -1;
+    }
+    return i;
+}
 
-    return true;
+void Engine::unite(const std::string& id1, const std::string& id2)
+{
+
+}
+void Engine::concat(const std::string& id1, const std::string& id2)
+{
+
+}
+void Engine::cyk(const std::string& id) const
+{
+
+}
+void Engine::iter(const std::string& id)
+{
+
+}
+void Engine::empty(const std::string& id) const
+{
+
+}
+void Engine::chomskify(const std::string& id)
+{
+
 }

@@ -1,21 +1,9 @@
-#include <iostream>
-#include <fstream> 
-#include <string> 
 #include "grammar.hpp"
 
-/*
-unsigned Grammar::grammarsCount = 0;
-
-Grammar::Grammar()
+std::string Grammar::getId() const 
 {
-    grammarsCount++;
+    return id;
 }
-
-Grammar::~Grammar()
-{
-    grammarsCount--;
-}
-*/
 void Grammar::setId(unsigned number)
 {
     id = std::to_string(number+1);
@@ -45,36 +33,22 @@ void Grammar::clear()
 
 void Grammar::addLetterToAlphabet(char letter)
 {
-    unsigned index = (unsigned)letter;
-    if(letter >= 0 && letter <= 9)  
-    {
-        index -= 0;
-        if(!this->alphabet[index]){
-            this->alphabet[index] = true;
-        }
-    }
-    if(letter >= 'a' && letter <= 'z')
-    {
-        index -= 'a';
-        index += 10;
-
-        if(!this->alphabet[index]){
-            this->alphabet[index] = true;
-        }
-    }
+    if (letter >= '0' && letter <= '9')
+	{
+		this->alphabet[letter - '0'] = true;
+	}
+	else if (letter >= 'a' && letter <= 'z')
+	{
+		this->alphabet[letter - 'a' + 10] = true;
+	}
 }
 
 void Grammar::addLetterToVariables(char letter)
 {
-    unsigned index = (unsigned) letter;
-    if(letter >= 'A' && letter <= 'Z')
-    {
-        index -= 'A';
-
-        if(!this->variables[index]){
-            this->variables[index] = true;
-        }
-    }
+    if (letter >= 'A' && letter <= 'Z')
+	{
+		this->variables[letter - 'A'] = true;
+	}
 }
 
 void Grammar::addStartVariable(char letter)
@@ -89,14 +63,8 @@ void Grammar::addRule(const Rule& rule){
     rules.push_back(rule);
 }
 
-void Grammar::print(std::ofstream& file)
+void Grammar::display(std::ostream& file) const
 {
-    
-    if (!file.is_open())
-	{
-		std::cerr << "File is not openG" << std::endl;
-		return ;
-	}
 
     file << 'a';
     for (size_t i = 0; i < 36; i++)
@@ -125,55 +93,13 @@ void Grammar::print(std::ofstream& file)
         }
     }
 
-    file << std::endl << 's' << ' ' << start_variable;
+    file << std::endl << 's' << ' ' << start_variable ;
 
     for (size_t i = 0; i < rules.size(); i++)
     {
-        rules[i].print(file);
+        file << std::endl << 'r' << i << " " << rules[i].getVariable();
+        rules[i].display(file);
     }
-
-    //file.close();
-}
-
-void Grammar::print()
-{
-
-    std::cout  << 'a';
-    for (size_t i = 0; i < 36; i++)
-    {
-        if(alphabet[i] )
-        {
-            char symbol;
-            if(i<10)
-            {
-                symbol = i+'0';
-            }
-            else
-            {
-                symbol = i-10+'a';
-            }
-            std::cout  << ' ' << symbol;
-        }
-    }
-
-    std::cout  << std::endl << 'v';
-    for (size_t i = 0; i < 26; i++)
-    {
-        if(variables[i] )
-        {
-            std::cout  << ' ' << (char)(i+'A');
-        }
-    }
-
-    std::cout << std::endl << 's' << ' ' << start_variable;
-
-    for (size_t i = 0; i < rules.size(); i++)
-    {
-        std::cout << std::endl <<"r"<< i; 
-        rules[i].print();
-    }
-    std::cout << std::endl;
-    //file.close();
 }
 
 void Grammar::removeRule(size_t index)
@@ -189,7 +115,7 @@ void Grammar::removeRule(size_t index)
     }
 }
 
-bool Grammar::containsE()
+bool Grammar::containsE() const
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -199,3 +125,4 @@ bool Grammar::containsE()
     }
     return false;
 }
+

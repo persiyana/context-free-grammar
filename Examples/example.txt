@@ -1,12 +1,12 @@
 a a b
 v M S
 s R
-r S aSb e
-r M aMaa
+r0 S aSb epsilon
+r1 M aMaa
 ;
 a a b
 v S X
 s S
-r S aXb
-r X a b
+r0 S aXb
+r1 X a b
 ;

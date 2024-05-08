@@ -3,24 +3,24 @@
 #include <vector>
 #include <iostream>
 #include <fstream> 
+#include <string> 
+
 #include "../Rule/rule.hpp"
 
 class Grammar
 {
 public: 
-    //Grammar();
-    //~Grammar();
+    //Grammar(); za stat promenliva
     void addRule(const Rule&);
     void addLetterToAlphabet(char);
     void addLetterToVariables(char);
     void addStartVariable(char);
-    void print(std::ofstream&);
-    void print();
-    void setId(unsigned);
+    void display(std::ostream& s = std::cout) const;
+    void setId(unsigned); // private kato napravq statichna promenliva
     void clear();
-    std::string getId() {return id;}
+    std::string getId() const;
     void removeRule(size_t);
-    bool containsE();
+    bool containsE() const;
     //static unsigned grammarsCount;
 private:
     std::string id = "";
