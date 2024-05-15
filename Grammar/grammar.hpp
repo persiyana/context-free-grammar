@@ -16,7 +16,9 @@ class Grammar
 public: 
     void addRule(const Rule&);
     void addLetterToAlphabet(char);
-    void addLetterToVariables(char);
+    void addLetterToAlphabet(size_t);
+    void addLetterToVariables(char letter);
+    void addLetterToVariables(size_t index);
     void addStartVariable(char);
     void display(std::ostream& s = std::cout) const;
     void clear();
@@ -26,6 +28,10 @@ public:
     static unsigned grammarsCount;
     char getUnusedVariable() const;
     char getStartVariable() const;
+    bool getVariable(size_t i) const;
+    bool getAlphabet(size_t i) const;
+    std::vector<Rule> getRules() const;
+    void changeVariable(size_t letter, size_t unusedLetter);
 private:
     std::string id = "";
     bool alphabet[ALPHABET_SIZE]{false};

@@ -45,12 +45,21 @@ void Grammar::addLetterToAlphabet(char letter)
 	}
 }
 
+void Grammar::addLetterToAlphabet(size_t index)
+{
+    this->alphabet[index] = true;
+}
+
 void Grammar::addLetterToVariables(char letter)
 {
     if (letter >= 'A' && letter <= 'Z')
 	{
 		this->variables[letter - 'A'] = true;
 	}
+}
+void Grammar::addLetterToVariables(size_t index)
+{
+    this->variables[index] = true;
 }
 
 void Grammar::addStartVariable(char letter)
@@ -145,4 +154,25 @@ char Grammar::getUnusedVariable() const
 char Grammar::getStartVariable() const
 {
     return start_variable;
+}
+
+bool Grammar::getVariable(size_t i) const
+{
+    return variables[i];
+}
+
+bool Grammar::getAlphabet(size_t i) const
+{
+    return alphabet[i];
+}
+
+std::vector<Rule> Grammar::getRules() const
+{
+    return rules;
+}
+
+void Grammar::changeVariable(size_t letter, size_t unusedLetter)
+{
+    variables[letter]= false;
+    variables[letter] = true;
 }

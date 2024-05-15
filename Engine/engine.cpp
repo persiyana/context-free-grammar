@@ -58,7 +58,7 @@ void Engine::run()
         }
         else if(input == "chomsky" && fileIsOpened)
         {
-            std::cout << chomsky(args[0]);
+            chomsky(args[0]);
         }
         else if(input == "chomskify" && fileIsOpened)
         {
@@ -79,11 +79,11 @@ void Engine::run()
         //the arguments are two id's:
         else if(input == "union" && fileIsOpened)
         {
-            std::cout << unite(args[0], args[1]);
+            std::cout << unite(args[0], args[1]) << std::endl;
         }
         else if(input == "concat" && fileIsOpened)
         {
-            std::cout << concat(args[0], args[1]);
+            std::cout << concat(args[0], args[1])<< std::endl;
         }
         //the arguments are id and new rule:
         else if(input == "addRule" && fileIsOpened)
@@ -330,27 +330,6 @@ std::string Engine::addRule(const std::string& id, const Rule& rule)
     }
 }
 
-std::string Engine::chomsky(const std::string& id) const
-{
-    int index = indexOfId(id);
-    
-    if(index == -1) 
-    {
-        return "Id not found\n";
-    }
-    else
-    {
-        if(grammarList[index].containsE())
-        {
-            return "This grammar is not in Chomsky normal form\n";
-        }
-        else
-        {
-            return "This grammar is in Chomsky normal form\n";
-        }
-    }
-}
-
 int Engine::indexOfId(const std::string& id) const
 {
     size_t i = 0;
@@ -366,11 +345,11 @@ int Engine::indexOfId(const std::string& id) const
     return i;
 }
 
-char Engine::unusedVariable(size_t index) const
+char Engine::unusedVariable(Grammar grammar) const
 {
     char unused = ' ';
 
-    unused = grammarList[index].getUnusedVariable();
+    unused = grammar.getUnusedVariable();
     
     return unused;
 }
@@ -386,9 +365,63 @@ std::string Engine::unite(const std::string& id1, const std::string& id2) //U
     }
     else
     {
+        changeVariables(id1, id2);
+        std::string newId;
+        Grammar united;
+
+        for (size_t i = 0; i < 36; i++)
+        {
+            if(grammarList[index1].getAlphabet(i) || grammarList[index2].getAlphabet(i))
+            {
+                united.addLetterToAlphabet(i);
+            }
+        }
+        for (size_t i = 0; i < 26; i++)
+        {
+            if(grammarList[index1].getVariable(i) || grammarList[index2].getVariable(i))
+            {
+                united.addLetterToVariables(i);
+            }
+        }
+
+        char unusedVar = unusedVariable(united);
+        if(unusedVar != ' ')
+        {
+            united.addLetterToVariables(unusedVar);
+            united.addStartVariable(unusedVar);
+
+            std::vector<std::string> rules;
+            std::string start1 = "", start2 = "";
+            start1 += grammarList[index1].getStartVariable();
+            start2 += grammarList[index2].getStartVariable();
+            rules.push_back(start1);
+            rules.push_back(start2);
+
+            Rule newRule(unusedVar, rules);
+            united.addRule(newRule);
+            newId = united.getId();
+        }
         
+        std::vector<Rule> rulesIndex1 = grammarList[index1].getRules();
+        std::vector<Rule> rulesIndex2 = grammarList[index2].getRules();
+
+        for (size_t i = 0; i < rulesIndex1.size(); i++)
+        {
+            united.addRule(rulesIndex1[i]);
+        }
+
+        for (size_t i = 0; i < rulesIndex2.size(); i++)
+        {
+            united.addRule(rulesIndex2[i]);
+        }
+
+        
+        
+        grammarList.push_back(united);
+        return newId;
     }
 }
+
 std::string Engine::concat(const std::string& id1, const std::string& id2) //.
 {
     int index1 = indexOfId(id1);
@@ -400,13 +433,61 @@ std::string Engine::concat(const std::string& id1, const std::string& id2) //.
     }
     else
     {
+        changeVariables(id1, id2);
+        std::string newId;
+        Grammar concatenated;
+
+        for (size_t i = 0; i < 36; i++)
+        {
+            if(grammarList[index1].getAlphabet(i) || grammarList[index2].getAlphabet(i))
+            {
+                concatenated.addLetterToAlphabet(i);
+            }
+        }
+        for (size_t i = 0; i < 26; i++)
+        {
+            if(grammarList[index1].getVariable(i) || grammarList[index2].getVariable(i))
+            {
+                concatenated.addLetterToVariables(i);
+            }
+        }
+        char unusedVar = unusedVariable(concatenated);
+        if(unusedVar != ' ')
+        {
+            concatenated.addLetterToVariables(unusedVar);
+            concatenated.addStartVariable(unusedVar);
+
+            std::vector<std::string> rules;
+            std::string start = "";
+            start += grammarList[index1].getStartVariable();
+            start += grammarList[index2].getStartVariable();
+            rules.push_back(start);
+
+            Rule newRule(unusedVar, rules);
+            concatenated.addRule(newRule);
+            newId = concatenated.getId();
+        }
         
+        std::vector<Rule> rulesIndex1 = grammarList[index1].getRules();
+        std::vector<Rule> rulesIndex2 = grammarList[index2].getRules();
+
+        for (size_t i = 0; i < rulesIndex1.size(); i++)
+        {
+            concatenated.addRule(rulesIndex1[i]);
+        }
+
+        for (size_t i = 0; i < rulesIndex2.size(); i++)
+        {
+            concatenated.addRule(rulesIndex2[i]);
+        }
+
+        
+        
+        grammarList.push_back(concatenated);
+        return newId;
     }
 }
-void Engine::cyk(const std::string& id) const
-{
 
-}
 std::string Engine::iter(const std::string& id) //*
 {
     int index = indexOfId(id);
@@ -417,7 +498,7 @@ std::string Engine::iter(const std::string& id) //*
     }
     else
     {
-        char unused = unusedVariable(index);
+        char unused = unusedVariable(grammarList[index]);
         std::string newId = "";
         if(unused != ' ')
         {
@@ -440,10 +521,71 @@ std::string Engine::iter(const std::string& id) //*
         return newId;
     }
 }
+
+void Engine::changeVariables(const std::string& id1, const std::string& id2)
+{
+    
+    int index1 = indexOfId(id1);
+    int index2 = indexOfId(id2);
+    
+    if(index1 == -1 || index1 == -1) 
+    {
+        std::cout << "One or both of id's were not found\n";
+    }
+    else
+    {
+        std::vector<size_t> indexesOfUnusedVariables;
+
+        for (size_t i = 0; i < 26; i++)
+        {
+            if(grammarList[index1].getVariable(i) == false && grammarList[index2].getVariable(i) == false)
+            {
+                indexesOfUnusedVariables.push_back(i);
+            }
+        }
+
+        for (size_t i = 0; i < 26; i++)
+        {
+            if(grammarList[index1].getVariable(i) == true && grammarList[index2].getVariable(i) == true)
+            {
+                grammarList[index2].changeVariable(i, indexesOfUnusedVariables[indexesOfUnusedVariables.size() - 1]);
+                indexesOfUnusedVariables.pop_back();
+            }
+        }
+
+    }
+}
+
+
+
+void Engine::cyk(const std::string& id) const
+{
+    int index = indexOfId(id);
+    
+    if(index == -1) 
+    {
+        std::cout << "Id not found\n";
+    }
+    else
+    {
+
+    }
+}
+
 void Engine::empty(const std::string& id) const
 {
+    int index = indexOfId(id);
+    
+    if(index == -1) 
+    {
+        std::cout << "Id not found\n";
+    }
+    else
+    {
 
+    }
 }
+
 std::string Engine::chomskify(const std::string& id)
 {
     int index = indexOfId(id);
@@ -451,6 +593,20 @@ std::string Engine::chomskify(const std::string& id)
     if(index == -1) 
     {
         return "Id not found\n";
+    }
+    else
+    {
+
+    }
+}
+
+void Engine::chomsky(const std::string& id) const
+{
+    int index = indexOfId(id);
+    
+    if(index == -1) 
+    {
+        std::cout << "Id not found\n";
     }
     else
     {

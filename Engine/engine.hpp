@@ -35,12 +35,13 @@ private:
     std::string removeRule(const std::string& id, size_t number);
     std::string unite(const std::string& id1, const std::string& id2);
     std::string concat(const std::string& id1, const std::string& id2);
-    std::string chomsky(const std::string& id) const;
+    void chomsky(const std::string& id) const;
     void cyk(const std::string& id) const;
     std::string iter(const std::string& id);
     void empty(const std::string& id) const;
     std::string chomskify(const std::string& id);
 
     int indexOfId(const std::string& id) const;
-    char unusedVariable(size_t) const;
+    char unusedVariable(Grammar) const;
+    void changeVariables(const std::string& id1, const std::string& id2);
 };
