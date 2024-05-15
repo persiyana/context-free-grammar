@@ -39,3 +39,24 @@ void Rule::display(std::ostream& file) const{
 bool Rule::containsE() const{
     return hasEpsilon;
 }
+
+void Rule::changeVariable(char oldVar, char newVar)
+{
+    if(variable == oldVar) 
+    {
+        variable = newVar;
+    }
+
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        for (size_t j = 0; j < rules[i].size(); j++)
+        {
+            if(rules[i][j] == oldVar)
+            {
+                rules[i][j] = newVar;
+            }
+        }
+        
+    }
+    
+}

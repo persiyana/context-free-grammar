@@ -14,6 +14,7 @@ public:
     void addRule(std::string);
     void display(std::ostream& s = std::cout) const;
     bool containsE() const;
+    void changeVariable(char, char);
 private:
     char variable = '\0';
     std::vector<std::string> rules;

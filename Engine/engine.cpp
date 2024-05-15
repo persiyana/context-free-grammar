@@ -548,8 +548,15 @@ void Engine::changeVariables(const std::string& id1, const std::string& id2)
         {
             if(grammarList[index1].getVariable(i) == true && grammarList[index2].getVariable(i) == true)
             {
-                grammarList[index2].changeVariable(i, indexesOfUnusedVariables[indexesOfUnusedVariables.size() - 1]);
+                size_t indexOfUnusedLetter = indexesOfUnusedVariables[indexesOfUnusedVariables.size() - 1];
+                grammarList[index2].changeVariable(i, indexOfUnusedLetter);
                 indexesOfUnusedVariables.pop_back();
+                size_t startVar2 = grammarList[index2].getStartVariable() - 'A';
+                if(startVar2 == i)
+                {
+                    char variable = indexOfUnusedLetter + 'A';
+                    grammarList[index2].addStartVariable(variable);
+                }
             }
         }
 

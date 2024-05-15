@@ -20,6 +20,7 @@ public:
     void addLetterToVariables(char letter);
     void addLetterToVariables(size_t index);
     void addStartVariable(char);
+    
     void display(std::ostream& s = std::cout) const;
     void clear();
     std::string getId() const;

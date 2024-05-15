@@ -65,11 +65,14 @@ void Grammar::addLetterToVariables(size_t index)
 void Grammar::addStartVariable(char letter)
 {
     grammarsCount++;
-    setId(); 
+   
     if(letter >= 'A' && letter <= 'Z')
     {
         start_variable = letter;
-    }
+        addLetterToVariables(letter);
+    } 
+    
+    setId(); 
 }
 
 void Grammar::addRule(const Rule& rule){
@@ -174,5 +177,19 @@ std::vector<Rule> Grammar::getRules() const
 void Grammar::changeVariable(size_t letter, size_t unusedLetter)
 {
     variables[letter]= false;
-    variables[letter] = true;
+    variables[unusedLetter] = true;
+    char oldVar = letter+'A';
+    char newVar = unusedLetter + 'A';
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        rules[i].changeVariable(oldVar, newVar);
+    }
+    for (size_t i = 0; i < id.size(); i++)
+    {
+        if(id[i] == oldVar)
+        {
+            id[i] = newVar;
+        }
+    }
+    
 }
