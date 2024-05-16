@@ -462,7 +462,7 @@ std::string Engine::concat(const std::string& id1, const std::string& id2) //.
             start += grammarList[index1].getStartVariable();
             start += grammarList[index2].getStartVariable();
             rules.push_back(start);
-
+            rules.push_back("epsilon");
             Rule newRule(unusedVar, rules);
             concatenated.addRule(newRule);
             newId = concatenated.getId();
