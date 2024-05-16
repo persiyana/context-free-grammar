@@ -15,6 +15,9 @@ public:
     void display(std::ostream& s = std::cout) const;
     bool containsE() const;
     void changeVariable(char, char);
+    bool otherRules() const;
+    bool isSmallLetterOrNumber(char) const;
+    bool isCapitalLetter(char) const;
 private:
     char variable = '\0';
     std::vector<std::string> rules;

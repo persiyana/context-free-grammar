@@ -10,3 +10,12 @@ s S
 r0 S aXb
 r1 X a b
 ;
+a a b
+v S A B X R
+s S
+r0 S a XA AX b epsilon
+r1 A RB
+r2 B AX b a
+r3 X a
+r4 R XB
+;

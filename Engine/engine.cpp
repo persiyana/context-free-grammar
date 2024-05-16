@@ -563,7 +563,28 @@ void Engine::changeVariables(const std::string& id1, const std::string& id2)
     }
 }
 
-
+void Engine::chomsky(const std::string& id) const
+{
+    int index = indexOfId(id);
+    
+    if(index == -1) 
+    {
+        std::cout << "Id not found\n";
+    }
+    else
+    {
+        bool isCNF = grammarList[index].chomsky();
+        if(isCNF)
+        {
+            std::cout << "Grammar with id " << id << " is in Chomsky normal form\n";
+        }
+        else
+        {
+            std::cout << "Grammar with id " << id << " is not in Chomsky normal form\n";
+        }
+        
+    }
+}
 
 void Engine::cyk(const std::string& id) const
 {
@@ -607,16 +628,3 @@ std::string Engine::chomskify(const std::string& id)
     }
 }
 
-void Engine::chomsky(const std::string& id) const
-{
-    int index = indexOfId(id);
-    
-    if(index == -1) 
-    {
-        std::cout << "Id not found\n";
-    }
-    else
-    {
-
-    }
-}

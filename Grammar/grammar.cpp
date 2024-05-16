@@ -193,3 +193,22 @@ void Grammar::changeVariable(size_t letter, size_t unusedLetter)
     }
     
 }
+
+bool Grammar::chomsky() const
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        if(start_variable != rules[i].getVariable() && rules[i].containsE())
+        {
+            
+            return false;
+        }
+        if(!rules[i].otherRules())
+        {
+            std::cout << "heheree";
+            return false;
+        }
+    }
+
+    return true;
+}

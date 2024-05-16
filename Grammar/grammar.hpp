@@ -33,6 +33,7 @@ public:
     bool getAlphabet(size_t i) const;
     std::vector<Rule> getRules() const;
     void changeVariable(size_t letter, size_t unusedLetter);
+    bool chomsky() const;
 private:
     std::string id = "";
     bool alphabet[ALPHABET_SIZE]{false};
