@@ -66,7 +66,7 @@ void Engine::run()
         }
         else if(input == "cyk" && fileIsOpened)
         {
-            cyk(args[0]);
+            cyk(args[0], args[1]);
         }
         else if(input == "iter" && fileIsOpened)
         {
@@ -586,7 +586,7 @@ void Engine::chomsky(const std::string& id) const
     }
 }
 
-void Engine::cyk(const std::string& id) const
+void Engine::cyk(const std::string& id, const std::string& word) 
 {
     int index = indexOfId(id);
     
@@ -596,7 +596,20 @@ void Engine::cyk(const std::string& id) const
     }
     else
     {
-
+        if(grammarList[index].chomsky()){
+            
+            std::string newId = chomskify(id);
+            index = indexOfId(newId);
+        }
+        bool res = grammarList[index].cyk(word);
+        if(res)
+        {
+            std::cout << "The word " << word << " is recognized by the grammar with id " << id << std::endl;
+        }
+        else
+        {
+            std::cout << "The word " << word << " is not recognized by the grammar with id " << id << std::endl;
+        }
     }
 }
 
@@ -624,7 +637,7 @@ std::string Engine::chomskify(const std::string& id)
     }
     else
     {
-
+        std::cout << "CHOMSKIFY\n";
     }
 }
 

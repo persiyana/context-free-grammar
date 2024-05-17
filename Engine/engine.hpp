@@ -36,7 +36,7 @@ private:
     std::string unite(const std::string& id1, const std::string& id2);
     std::string concat(const std::string& id1, const std::string& id2);
     void chomsky(const std::string& id) const;
-    void cyk(const std::string& id) const;
+    void cyk(const std::string& id, const std::string& word);
     std::string iter(const std::string& id);
     void empty(const std::string& id) const;
     std::string chomskify(const std::string& id);

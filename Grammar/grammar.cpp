@@ -2,11 +2,11 @@
 
 unsigned Grammar::grammarsCount = 0;
 
-
 std::string Grammar::getId() const 
 {
     return id;
 }
+
 void Grammar::setId()
 {
     id = std::to_string(grammarsCount);
@@ -57,6 +57,7 @@ void Grammar::addLetterToVariables(char letter)
 		this->variables[letter - 'A'] = true;
 	}
 }
+
 void Grammar::addLetterToVariables(size_t index)
 {
     this->variables[index] = true;
@@ -205,10 +206,76 @@ bool Grammar::chomsky() const
         }
         if(!rules[i].otherRules())
         {
-            std::cout << "heheree";
             return false;
         }
     }
 
     return true;
+}
+
+bool Grammar::hasRule(char variable, char letter) const
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        if(rules[i].getVariable() == variable)
+        {
+            return rules[i].hasLetter(letter);
+        }
+    }
+    return false;
+}
+
+bool Grammar::cyk(const std::string& word) const
+{
+    size_t n = word.size();
+    if(n==0)
+    {
+        for (size_t i = 0; i < rules.size(); i++)
+        {
+            if(start_variable == rules[i].getVariable() && rules[i].containsE())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::vector<std::vector<std::string> > table;
+    table.resize(n);
+    for (int i = 0; i < n; ++i)
+    {
+        table[i].resize(n);
+    }
+
+    for (size_t i = 0; i < n; i++)
+    {
+        for (size_t j = 0; j < VARIABLES_SIZE; j++)
+        {
+            if(variables[j])
+            {
+                char variable = variables[j]+'A';
+                if(hasRule(variable, word[i]))
+                {
+                    table[i][i].push_back(variable);
+                }
+            }
+        }
+        
+    }
+
+    for (size_t i = 1; i < n; i++)
+    {
+        //todo step 4 https://www.geeksforgeeks.org/cyk-algorithm-for-context-free-grammar/
+    }
+    
+   
+    std::string res = table[0][n-1];
+    for (size_t i = 0; i < res.size(); i++)
+    {
+        if(res[i]==start_variable)
+        {
+            return true;
+        }
+    }
+    return false;
 }

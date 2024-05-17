@@ -34,6 +34,8 @@ public:
     std::vector<Rule> getRules() const;
     void changeVariable(size_t letter, size_t unusedLetter);
     bool chomsky() const;
+    bool cyk(const std::string& word) const;
+    bool hasRule(char variable, char letter) const;
 private:
     std::string id = "";
     bool alphabet[ALPHABET_SIZE]{false};

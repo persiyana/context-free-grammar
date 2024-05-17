@@ -96,3 +96,15 @@ bool Rule::isCapitalLetter(char letter) const
 {
     return (letter >= 'A' && letter <='Z');
 }
+
+bool Rule::hasLetter(char letter) const
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        if(rules[i].size() == 1 && rules[i][0]==letter)
+        {
+            return true;
+        }
+    }
+    return false;
+}

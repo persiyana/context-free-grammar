@@ -19,3 +19,11 @@ r2 B AX b a
 r3 X a
 r4 R XB
 ;
+a a b
+v S A B C
+s S 
+r0 S AB BC
+r1 A BA a
+r2 B CC b
+r3 C AB a
+;
