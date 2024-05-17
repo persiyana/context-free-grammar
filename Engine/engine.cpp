@@ -596,7 +596,7 @@ void Engine::cyk(const std::string& id, const std::string& word)
     }
     else
     {
-        if(grammarList[index].chomsky()){
+        if(!grammarList[index].chomsky()){
             
             std::string newId = chomskify(id);
             index = indexOfId(newId);

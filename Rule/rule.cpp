@@ -108,3 +108,8 @@ bool Rule::hasLetter(char letter) const
     }
     return false;
 }
+
+std::vector<std::string> Rule::getRules() const
+{
+    return rules;
+}

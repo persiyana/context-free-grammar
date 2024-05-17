@@ -225,8 +225,21 @@ bool Grammar::hasRule(char variable, char letter) const
     return false;
 }
 
+bool Grammar::stringContainsChar(std::string str, char ch) const
+{
+    for (size_t i = 0; i < str.size(); i++)
+    {
+        if(str[i]==ch)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Grammar::cyk(const std::string& word) const
 {
+   
     size_t n = word.size();
     if(n==0)
     {
@@ -238,16 +251,12 @@ bool Grammar::cyk(const std::string& word) const
             }
         }
         return false;
-    }
+    } 
 
-    std::vector<std::vector<std::string> > table;
-    table.resize(n);
-    for (int i = 0; i < n; ++i)
-    {
-        table[i].resize(n);
-    }
+    std::string initalValue = "";
+    std::vector<std::vector<std::string> > table(n, std::vector<std::string> (n, initalValue));
 
-    for (size_t i = 0; i < n; i++)
+    /*for (size_t i = 0; i < n; i++)
     {
         for (size_t j = 0; j < VARIABLES_SIZE; j++)
         {
@@ -263,12 +272,47 @@ bool Grammar::cyk(const std::string& word) const
         
     }
 
-    for (size_t i = 1; i < n; i++)
+    for (size_t i = 0; i < n; i++)
+   {
+    for (size_t j = 0; j < n; j++)
+   {
+        std::cout << table[i][j] << '\t';
+   }
+   std::cout<<std::endl;
+   }
+
+    for (size_t l = 1; l < n; l++)
     {
-        //todo step 4 https://www.geeksforgeeks.org/cyk-algorithm-for-context-free-grammar/
-    }
+        for (size_t i = 0; i < n-l; i++)
+        {
+            size_t j = i+l;
+            for (size_t k = i; k < j-1; k++)
+            {
+               for (size_t ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++)
+               {
+                    std::vector<std::string> rulesOfVar = rules[ruleIndex].getRules();
+                    for (size_t t = 0; t < rulesOfVar.size(); t++)
+                    {
+                        if(rulesOfVar[t].size() == 2)
+                        {
+                            if(stringContainsChar(table[i][k], rulesOfVar[t][0]) && stringContainsChar(table[k+1][j], rulesOfVar[t][1]))
+                            {
+                                table[i][j].push_back(rules[ruleIndex].getVariable());
+                            }
+                        }
+                    }
+                    
+               }
+               
+            }
+            
+        }
+        
+    }*/
     
    
+   
+
     std::string res = table[0][n-1];
     for (size_t i = 0; i < res.size(); i++)
     {

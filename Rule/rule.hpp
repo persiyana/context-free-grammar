@@ -19,6 +19,7 @@ public:
     bool isSmallLetterOrNumber(char) const;
     bool isCapitalLetter(char) const;
     bool hasLetter(char) const;
+    std::vector<std::string> getRules() const;
 private:
     char variable = '\0';
     std::vector<std::string> rules;
