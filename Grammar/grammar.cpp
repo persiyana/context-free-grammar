@@ -256,13 +256,13 @@ bool Grammar::cyk(const std::string& word) const
     std::string initalValue = "";
     std::vector<std::vector<std::string> > table(n, std::vector<std::string> (n, initalValue));
 
-    /*for (size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
     {
         for (size_t j = 0; j < VARIABLES_SIZE; j++)
         {
             if(variables[j])
             {
-                char variable = variables[j]+'A';
+                char variable = j+'A';
                 if(hasRule(variable, word[i]))
                 {
                     table[i][i].push_back(variable);
@@ -272,21 +272,12 @@ bool Grammar::cyk(const std::string& word) const
         
     }
 
-    for (size_t i = 0; i < n; i++)
-   {
-    for (size_t j = 0; j < n; j++)
-   {
-        std::cout << table[i][j] << '\t';
-   }
-   std::cout<<std::endl;
-   }
-
     for (size_t l = 1; l < n; l++)
     {
         for (size_t i = 0; i < n-l; i++)
         {
             size_t j = i+l;
-            for (size_t k = i; k < j-1; k++)
+            for (size_t k = i; k < j; k++)
             {
                for (size_t ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++)
                {
@@ -295,7 +286,7 @@ bool Grammar::cyk(const std::string& word) const
                     {
                         if(rulesOfVar[t].size() == 2)
                         {
-                            if(stringContainsChar(table[i][k], rulesOfVar[t][0]) && stringContainsChar(table[k+1][j], rulesOfVar[t][1]))
+                            if(stringContainsChar(table[i][k], rulesOfVar[t][0]) && stringContainsChar(table[k+1][j], rulesOfVar[t][1]) && !stringContainsChar(table[i][j], rules[ruleIndex].getVariable()))
                             {
                                 table[i][j].push_back(rules[ruleIndex].getVariable());
                             }
@@ -307,10 +298,16 @@ bool Grammar::cyk(const std::string& word) const
             }
             
         }
-        
-    }*/
+    }
     
-   
+   for (size_t i = 0; i < n; i++)
+    {
+        for (size_t j = 0; j < n; j++)
+        {
+            std::cout << table[i][j] << "\t";
+        }
+        std::cout<<std::endl;
+    }
    
 
     std::string res = table[0][n-1];
