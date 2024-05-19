@@ -9,11 +9,14 @@ class Rule
 public:
     Rule() = default;
     Rule(char variable, std::vector<std::string> rules);
+    Rule(char, char);
+    Rule(char, std::string);
     void setVariable(char);
     char getVariable() const;
     void addRule(std::string);
+    void setRules(std::vector<std::string>);
     void display(std::ostream& s = std::cout) const;
-    bool containsE() const;
+    bool getHasEpsilon() const;
     void changeVariable(char, char);
     bool otherRules() const;
     bool isSmallLetterOrNumber(char) const;

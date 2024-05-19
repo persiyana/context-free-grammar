@@ -1,4 +1,11 @@
 a a b
+v A S B
+s S
+r0 S ASB
+r1 A aAS a epsilon
+r2 B SbS A bb
+;
+a a b
 v M S
 s R
 r0 S aSb epsilon

@@ -37,6 +37,8 @@ public:
     bool stringContainsChar(std::string, char) const;
     bool cyk(const std::string& word) const;
     bool hasRule(char variable, char letter) const;
+    void fixRules();
+    
 private:
     std::string id = "";
     bool alphabet[ALPHABET_SIZE]{false};
@@ -45,4 +47,12 @@ private:
     std::vector<Rule> rules;
     
     void setId();
+    void eliminateUselessProd();
+    void eliminateEpsilonProd();
+    void eliminateUnitProd();
+    void replaceTerminals();
+    void convertToTwoVars();
+    bool isOfAlphabet(char);
+    bool isOfVariables(char);
+    char hasSingleRule(std::string );
 };

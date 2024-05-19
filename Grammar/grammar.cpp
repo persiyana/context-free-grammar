@@ -136,7 +136,7 @@ bool Grammar::containsE() const
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
-       if(rules[i].containsE()){
+       if(rules[i].getHasEpsilon()){
         return true;
        }
     }
@@ -199,7 +199,7 @@ bool Grammar::chomsky() const
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
-        if(start_variable != rules[i].getVariable() && rules[i].containsE())
+        if(start_variable != rules[i].getVariable() && rules[i].getHasEpsilon())
         {
             
             return false;
@@ -245,7 +245,7 @@ bool Grammar::cyk(const std::string& word) const
     {
         for (size_t i = 0; i < rules.size(); i++)
         {
-            if(start_variable == rules[i].getVariable() && rules[i].containsE())
+            if(start_variable == rules[i].getVariable() && rules[i].getHasEpsilon())
             {
                 return true;
             }
@@ -319,4 +319,150 @@ bool Grammar::cyk(const std::string& word) const
         }
     }
     return false;
+}
+
+void Grammar::fixRules()
+{
+    eliminateUselessProd();
+    eliminateEpsilonProd();
+    eliminateUnitProd();
+    replaceTerminals();
+    convertToTwoVars();
+}
+
+void Grammar::eliminateUselessProd()
+{
+
+}
+
+void Grammar::eliminateEpsilonProd()
+{
+
+}
+
+void Grammar::eliminateUnitProd()
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        std::vector<std::string> ruleOfI = rules[i].getRules();
+        for (size_t j = 0; j < ruleOfI.size(); j++)
+        {
+            if(ruleOfI[j].size() == 1 && isOfVariables(ruleOfI[j][0]))
+            {
+                char variable = ruleOfI[j][0];
+                int indexOfVar = 0;
+                while(rules[indexOfVar].getVariable() != variable && indexOfVar < rules.size())
+                {
+                    indexOfVar++;
+                }
+                if(indexOfVar < rules.size())
+                {
+                    std::vector<std::string> rulesOfVar = rules[indexOfVar].getRules();
+                    ruleOfI.erase(ruleOfI.begin()+j);
+                    for (size_t k = 0; k < rulesOfVar.size(); k++)
+                    {
+                        ruleOfI.push_back(rulesOfVar[k]);
+                    }
+                    
+                }
+                
+            }
+        }
+        rules[i].setRules(ruleOfI);
+    }
+    
+}
+
+bool Grammar::isOfAlphabet(char letter)
+{
+    return ((letter>='a' && letter<='z') || (letter>='0' && letter<='9'));
+}
+
+bool Grammar::isOfVariables(char letter)
+{
+    return (letter>='A' && letter<='Z');
+}
+
+char Grammar::hasSingleRule(std::string r)
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        std::vector<std::string> ruleOfI = rules[i].getRules();
+        if(ruleOfI.size()==1 && ruleOfI[0].size() == r.size() && ruleOfI[0]==r){
+            return rules[i].getVariable();
+        }
+    }
+    return ' ';
+}
+
+void Grammar::replaceTerminals()
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        std::vector<std::string> ruleOfI = rules[i].getRules();
+        for (size_t j = 0; j < ruleOfI.size(); j++)
+        {
+            if(ruleOfI[j].size() > 1 && ruleOfI[j] != "epsilon")
+            {
+                for (size_t k = 0; k < ruleOfI[j].size(); k++)
+                {
+                    if(isOfAlphabet(ruleOfI[j][k]))
+                    {
+                        std::string temp;
+                        temp+= ruleOfI[j][k];
+                        char var = hasSingleRule(temp);
+                        if(var==' '){
+                            var = getUnusedVariable();
+                            addLetterToVariables(var);
+                            Rule newRule(var, ruleOfI[j][k]);
+                            rules.push_back(newRule);
+                        }
+                        ruleOfI[j][k]=var;
+                    }
+                }
+                
+            }
+        }
+        rules[i].setRules(ruleOfI);
+    }
+    
+}
+
+void Grammar::convertToTwoVars()
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        std::vector<std::string> ruleOfI = rules[i].getRules();
+        for (size_t j = 0; j < ruleOfI.size(); j++)
+        {
+            if(ruleOfI[j].size() > 2)
+            {
+                for (size_t k = 0; k < ruleOfI[j].size()-1; k++)
+                {
+                    if(isOfVariables(ruleOfI[j][k]) && isOfVariables(ruleOfI[j][k+1]))
+                    {
+                        std::string newR = "";
+                        newR.push_back(ruleOfI[j][k]);
+                        newR.push_back(ruleOfI[j][k+1]);
+                        char var = hasSingleRule(newR);
+                        if(var==' '){
+                            var = getUnusedVariable();
+                            addLetterToVariables(var);
+                            Rule newRule(var, newR);
+                            rules.push_back(newRule);
+                            
+                        }
+                        ruleOfI[j][k]=var;
+                        for (size_t m = k+1; m < ruleOfI[j].size()-1; m++)
+                        {
+                            ruleOfI[j][m] = ruleOfI[j][m+1];
+                        }
+                        ruleOfI[j].pop_back();
+                    }
+                }
+            }
+        }
+        rules[i].setRules(ruleOfI);
+    }
+    
 }

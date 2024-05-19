@@ -3,6 +3,21 @@
 Rule::Rule(char variable, std::vector<std::string> rules)
 :  variable(variable), rules(rules) //todo validation
 {}
+Rule::Rule(char var, char rule)
+{
+    std::vector<std::string> rules;
+    rules.push_back("");
+    rules[0].push_back(rule);
+    variable = var;
+    this->rules = rules;
+}
+Rule::Rule(char var, std::string rule)
+{
+    std::vector<std::string> rules;
+    rules.push_back(rule);
+    variable = var;
+    this->rules = rules;
+}
 
 char Rule::getVariable() const 
 { 
@@ -36,7 +51,7 @@ void Rule::display(std::ostream& file) const{
 
 }
 
-bool Rule::containsE() const{
+bool Rule::getHasEpsilon() const{
     return hasEpsilon;
 }
 
@@ -112,4 +127,9 @@ bool Rule::hasLetter(char letter) const
 std::vector<std::string> Rule::getRules() const
 {
     return rules;
+}
+
+void Rule::setRules(std::vector<std::string> newRules)
+{   
+    rules = newRules;
 }

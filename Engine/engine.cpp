@@ -62,7 +62,7 @@ void Engine::run()
         }
         else if(input == "chomskify" && fileIsOpened)
         {
-            std::cout << chomskify(args[0]);
+            std::cout << chomskify(args[0]) << std::endl;
         }
         else if(input == "cyk" && fileIsOpened)
         {
@@ -613,6 +613,39 @@ void Engine::cyk(const std::string& id, const std::string& word)
     }
 }
 
+std::string Engine::chomskify(const std::string& id)
+{
+    int index = indexOfId(id);
+    
+    if(index == -1) 
+    {
+        return "Id not found\n";
+    }
+    else
+    {
+        if(grammarList[index].chomsky())
+        {
+            return id;
+        }
+        else
+        {
+            Grammar newGrammar = grammarList[index];
+            newGrammar.addStartVariable(newGrammar.getUnusedVariable());
+            std::vector<std::string> rule;
+            rule.push_back("");
+            rule[0].push_back(grammarList[index].getStartVariable());
+            Rule newStart(newGrammar.getStartVariable(), rule);
+            newGrammar.addRule(newStart);
+            
+            newGrammar.fixRules();
+
+            //
+            grammarList.push_back(newGrammar);
+            return newGrammar.getId();
+        }
+    }
+}
+
 void Engine::empty(const std::string& id) const
 {
     int index = indexOfId(id);
@@ -627,17 +660,5 @@ void Engine::empty(const std::string& id) const
     }
 }
 
-std::string Engine::chomskify(const std::string& id)
-{
-    int index = indexOfId(id);
-    
-    if(index == -1) 
-    {
-        return "Id not found\n";
-    }
-    else
-    {
-        std::cout << "CHOMSKIFY\n";
-    }
-}
+
 
