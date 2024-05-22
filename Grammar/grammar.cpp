@@ -321,6 +321,23 @@ bool Grammar::cyk(const std::string& word) const
     return false;
 }
 
+bool Grammar::isEmpty() const
+{
+    Grammar temp = *this;
+    temp.eliminateUselessProd();
+    
+    std::vector<Rule> tempRules = temp.getRules();
+
+    for (size_t i = 0; i < tempRules.size(); i++)
+    {
+        if(tempRules[i].getVariable() == temp.getStartVariable())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void Grammar::fixRules()
 {
     //eliminateEpsilonProd();
@@ -334,7 +351,86 @@ void Grammar::fixRules()
 
 void Grammar::eliminateUselessProd()
 {
+    size_t prev_size = 0;
 
+    do
+    {
+        prev_size = rules.size();
+        for (size_t i = 0; i < rules.size(); i++)
+        {
+            std::vector<std::string> rulesOfI = rules[i].getRules();
+            char variableOfI = rules[i].getVariable();
+            size_t count = 0;
+            for (size_t j = 0; j < rulesOfI.size(); j++)
+            {
+                if(std::find(rulesOfI[j].begin(), rulesOfI[j].end(), variableOfI) != rulesOfI[j].end())
+                {
+                    count++;
+                }
+                
+            }
+            
+            
+            if(count == rulesOfI.size() )
+            {
+                variables[variableOfI-'A'] = false;
+                removeVariable(variableOfI);
+            }
+
+        }
+    } while (prev_size != rules.size());
+    
+    
+    std::vector<char> unreachableVariables;
+
+    for (size_t i = 0; i < VARIABLES_SIZE; i++)
+    {
+        char variable = i+'A';
+        if(variables[i] && variable!=start_variable)
+        {
+            unreachableVariables.push_back(variable);
+        }
+    }
+    
+    
+    prev_size = 0;
+    do
+    {
+        prev_size = unreachableVariables.size();
+        for (size_t i = 0; i < rules.size(); i++)
+        {
+            if(std::find(unreachableVariables.begin(), unreachableVariables.end(), rules[i].getVariable()) == unreachableVariables.end())
+            {
+                std::vector<std::string> rulesOfI = rules[i].getRules();
+                for (size_t j = 0; j < rulesOfI.size(); j++)
+                {
+                    std::string rule = rulesOfI[j];
+                    for (size_t k = 0; k < rule.size(); k++)
+                    {
+                        for (size_t m = 0; m < unreachableVariables.size(); m++)
+                        {
+                            if(rule[k] ==unreachableVariables[m])
+                            {
+                                unreachableVariables.erase(unreachableVariables.begin() + m);
+                            }
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+
+        }
+    } while (prev_size != unreachableVariables.size());
+
+
+    for (size_t i = 0; i < unreachableVariables.size(); i++)
+    {
+        variables[unreachableVariables[i]-'A'] = false;
+        removeVariable(unreachableVariables[i]);
+    }
+    
 }
 
 void Grammar::getNullableVariables(std::vector<char>& nullableVariables) const
@@ -442,6 +538,23 @@ char Grammar::hasSingleRule(std::string r)
         }
     }
     return ' ';
+}
+
+void Grammar::removeVariable(char variable)
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        if(rules[i].getVariable() == variable)
+        {
+            rules.erase(rules.begin() + i);
+            i--;
+        }
+        else
+        {
+            rules[i].removeVariable(variable); 
+        }
+    }
+    
 }
 
 void Grammar::replaceTerminals()

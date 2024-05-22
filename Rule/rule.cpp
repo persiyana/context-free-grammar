@@ -199,3 +199,15 @@ void Rule::replaceNullable(std::vector<char> &nullableVariables)
     }
     
 }
+
+void Rule::removeVariable(char variable)
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        if(std::find(rules[i].begin(), rules[i].end(), variable) != rules[i].end())
+        {
+            rules.erase(rules.begin() + i);
+        }
+    }
+    
+}

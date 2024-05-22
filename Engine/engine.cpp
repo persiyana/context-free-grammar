@@ -222,6 +222,7 @@ std::string Engine::close()
     grammarList.clear();
     std::string result = "Succesfully closed " + fileName + '\n';
     fileName = "";
+    Grammar::grammarsCount = 0;
     return result;
 }
 
@@ -653,7 +654,14 @@ void Engine::empty(const std::string& id) const
     }
     else
     {
-
+        if(grammarList[index].isEmpty())
+        {
+            std::cout << "The language of grammar with id " << id << " is empty";
+        }
+        else
+        {
+            std::cout << "The language of grammar with id " << id << " is not empty";
+        }
     }
 }
 

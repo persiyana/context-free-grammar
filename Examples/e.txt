@@ -1,7 +1,8 @@
 a a b
-v A S B
+v A S B C
 s S
-r0 S ASB
-r1 A aAS a epsilon
-r2 B SbS A bb 
+r0 S abS abA abB
+r1 A cd
+r2 B aB
+r3 C dc
 ;

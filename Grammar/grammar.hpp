@@ -41,6 +41,7 @@ public:
     bool hasRule(char variable, char letter) const;
     void fixRules();
     void getNullableVariables(std::vector<char>& nullableVariables) const;
+    bool isEmpty() const;
     
 private:
     std::string id = "";
@@ -58,4 +59,5 @@ private:
     bool isOfAlphabet(char);
     bool isOfVariables(char);
     char hasSingleRule(std::string );
+    void removeVariable(char variable);
 };
