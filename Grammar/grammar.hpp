@@ -5,6 +5,7 @@
 #include <fstream> 
 #include <string> 
 #include <algorithm>
+#include <unordered_set>
 
 #include "../Rule/rule.hpp"
 

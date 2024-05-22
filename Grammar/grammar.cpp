@@ -323,11 +323,11 @@ bool Grammar::cyk(const std::string& word) const
 
 void Grammar::fixRules()
 {
-    //eliminateUselessProd();
-    eliminateEpsilonProd();
-    eliminateUnitProd();
-    replaceTerminals();
-    convertToTwoVars();
+    //eliminateEpsilonProd();
+    //eliminateUnitProd();
+    eliminateUselessProd();
+    //replaceTerminals();
+    //convertToTwoVars();
 
     setId();
 }
@@ -383,29 +383,40 @@ void Grammar::eliminateUnitProd()
     for (size_t i = 0; i < rules.size(); i++)
     {
         std::vector<std::string> ruleOfI = rules[i].getRules();
+
         for (size_t j = 0; j < ruleOfI.size(); j++)
         {
-            if(ruleOfI[j].size() == 1 && isOfVariables(ruleOfI[j][0]))
+            std::string currentRule = ruleOfI[j];
+
+            if(currentRule.size() == 1 && isOfVariables(currentRule[0]))
             {
-                char variable = ruleOfI[j][0];
-                int indexOfVar = 0;
-                while(rules[indexOfVar].getVariable() != variable && indexOfVar < rules.size())
+                if(currentRule[0] == rules[i].getVariable())
                 {
-                    indexOfVar++;
-                }
-                if(indexOfVar < rules.size())
-                {
-                    std::vector<std::string> rulesOfVar = rules[indexOfVar].getRules();
                     ruleOfI.erase(ruleOfI.begin()+j);
-                    for (size_t k = 0; k < rulesOfVar.size(); k++)
-                    {
-                        ruleOfI.push_back(rulesOfVar[k]);
-                    }
-                    
+                    j--;
                 }
-                
+                else
+                {
+                    char variable = ruleOfI[j][0];
+                    int indexOfVar = 0;
+                    while(rules[indexOfVar].getVariable() != variable && indexOfVar < rules.size())
+                    {
+                        indexOfVar++;
+                    }
+                    if(indexOfVar < rules.size())
+                    {
+                        std::vector<std::string> rulesOfVar = rules[indexOfVar].getRules();
+                        ruleOfI.erase(ruleOfI.begin()+j);
+                        for (size_t k = 0; k < rulesOfVar.size(); k++)
+                        {
+                            ruleOfI.push_back(rulesOfVar[k]);
+                        }
+                        
+                    }
+                }
             }
         }
+
         rules[i].setRules(ruleOfI);
     }
     

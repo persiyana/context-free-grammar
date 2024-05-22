@@ -332,17 +332,15 @@ std::string Engine::addRule(const std::string& id, const Rule& rule)
 
 int Engine::indexOfId(const std::string& id) const
 {
-    size_t i = 0;
-    while ( i < grammarList.size() && grammarList[i].getId()!=id)
+    for (size_t i = 0; i < grammarList.size(); i++)
     {
-        i++;
+        if (grammarList[i].getId()==id)
+        {
+            return i;
+        }
+        
     }
-    
-    if(i == grammarList.size() && grammarList[i].getId()!=id) 
-    {
-       return -1;
-    }
-    return i;
+    return -1;
 }
 
 char Engine::unusedVariable(Grammar grammar) const
