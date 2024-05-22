@@ -639,7 +639,6 @@ std::string Engine::chomskify(const std::string& id)
             
             newGrammar.fixRules();
 
-            //
             grammarList.push_back(newGrammar);
             return newGrammar.getId();
         }

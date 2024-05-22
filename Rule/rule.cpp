@@ -133,3 +133,69 @@ void Rule::setRules(std::vector<std::string> newRules)
 {   
     rules = newRules;
 }
+
+bool Rule::isNullable(std::vector<char>& nullableVariables) const
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        if (rules[i] == "epsilon")
+        {
+            return true;
+            break;
+        }
+
+        bool allNullable = true;
+        for (size_t j = 0; j < rules[i].size(); j++)
+        {
+            bool isFound = false;   
+            for (size_t n = 0; n < nullableVariables.size(); n++)
+            {
+                if(rules[i][j] == nullableVariables[n])
+                {
+                    isFound = true;
+                    break;
+                }
+            }
+            if(!isFound)
+            {
+                allNullable = false;
+            }
+        }
+        if(allNullable)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Rule::replaceNullable(std::vector<char> &nullableVariables)
+{
+
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        if(rules[i] == "epsilon")
+        {
+            rules.erase(rules.begin()+i);
+        }
+        else
+        {
+            for (size_t j = 0; j < rules[i].size(); j++)
+            {
+                if (std::find(nullableVariables.begin(), nullableVariables.end(), rules[i][j]) != nullableVariables.end())
+                {
+                    std::string newRule = rules[i];
+                    newRule.erase(newRule.begin()+j);
+                    if (std::find(rules.begin(), rules.end(), newRule) == rules.end())
+                    {
+                        rules.push_back(newRule);
+                    }
+                    
+                }
+            }
+            
+            
+        }
+    }
+    
+}

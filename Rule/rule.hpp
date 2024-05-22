@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream> 
+#include <algorithm>
 
 class Rule
 {
@@ -23,6 +24,8 @@ public:
     bool isCapitalLetter(char) const;
     bool hasLetter(char) const;
     std::vector<std::string> getRules() const;
+    bool isNullable(std::vector<char>& nullableVariables) const;
+    void replaceNullable(std::vector<char>& nullableVariables);
 private:
     char variable = '\0';
     std::vector<std::string> rules;

@@ -323,11 +323,13 @@ bool Grammar::cyk(const std::string& word) const
 
 void Grammar::fixRules()
 {
-    eliminateUselessProd();
+    //eliminateUselessProd();
     eliminateEpsilonProd();
     eliminateUnitProd();
     replaceTerminals();
     convertToTwoVars();
+
+    setId();
 }
 
 void Grammar::eliminateUselessProd()
@@ -335,9 +337,45 @@ void Grammar::eliminateUselessProd()
 
 }
 
+void Grammar::getNullableVariables(std::vector<char>& nullableVariables) const
+{
+    size_t previous_size = 0;
+    do
+    {
+        previous_size = nullableVariables.size();
+
+        for (size_t i = 0; i < rules.size(); i++)
+        {
+            char variable = rules[i].getVariable();
+            if (std::find(nullableVariables.begin(), nullableVariables.end(), variable) == nullableVariables.end()) {
+                if (rules[i].isNullable(nullableVariables)) {
+                    nullableVariables.push_back(variable);
+                }
+            }
+        }
+        
+
+    } while (nullableVariables.size() != previous_size);
+    
+}
+
 void Grammar::eliminateEpsilonProd()
 {
-
+    std::vector<char> nullableVariables;
+    getNullableVariables(nullableVariables);
+    for (int i = 0; i < rules.size(); i++)
+    {
+        if(rules[i].getRules().size() == 1 && rules[i].getRules()[0] == "epsilon")
+        {
+            rules.erase(rules.begin() + i);
+            i--;
+        }
+        else
+        {
+            rules[i].replaceNullable(nullableVariables);
+        }
+    }
+    
 }
 
 void Grammar::eliminateUnitProd()

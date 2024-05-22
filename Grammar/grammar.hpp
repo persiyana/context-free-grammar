@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream> 
 #include <string> 
+#include <algorithm>
 
 #include "../Rule/rule.hpp"
 
@@ -38,6 +39,7 @@ public:
     bool cyk(const std::string& word) const;
     bool hasRule(char variable, char letter) const;
     void fixRules();
+    void getNullableVariables(std::vector<char>& nullableVariables) const;
     
 private:
     std::string id = "";
