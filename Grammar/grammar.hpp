@@ -30,17 +30,14 @@ public:
     char getUnusedVariable() const;
     bool getVariable(size_t index) const;
     void changeVariable(size_t letter, size_t unusedLetter);
-    void getNullableVariables(std::vector<char>& nullableVariables) const;
-    
+   
     void addStartVariable(char letter);
     char getStartVariable() const;
 
     void addRule(const ProductionRule& rule);
     void removeRule(size_t index);
     std::vector<ProductionRule> getRules() const;
-    bool hasRuleWith(char variable, char letter) const;
-    bool containsEpsilon() const;
-
+    
     void display(std::ostream& s = std::cout) const;
     void clear();
     bool chomsky() const;
@@ -62,9 +59,9 @@ private:
     void replaceTerminals();
     void convertToTwoVariabless();
 
-    bool isOfTerminals(char letter);
-    bool isOfVariables(char letter);
     void removeVariable(char variable);
     char getVariableForRule(const std::string& rule);
-    
+    void getNullableVariables(std::vector<char>& nullableVariables) const;
+    bool hasRuleWith(char variable, char letter) const;
+    bool containsEpsilon() const;
 };

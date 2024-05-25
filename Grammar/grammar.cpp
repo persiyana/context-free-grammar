@@ -42,11 +42,6 @@ void Grammar::addLetterToTerminals(size_t index)
     this->terminals[index] = true;
 }
 
-bool Grammar::isOfTerminals(char letter)
-{
-    return ((letter>='a' && letter<='z') || (letter>='0' && letter<='9'));
-}
-
 bool Grammar::getTerminal(size_t index) const
 {
     return terminals[index];
@@ -68,11 +63,6 @@ void Grammar::addLetterToVariables(char letter)
 void Grammar::addLetterToVariables(size_t index)
 {
     this->variables[index] = true;
-}
-
-bool Grammar::isOfVariables(char letter)
-{
-    return (letter>='A' && letter<='Z');
 }
 
 void Grammar::removeVariable(char variable)
@@ -358,7 +348,7 @@ void Grammar::eliminateUnitProduction()
         {
             std::string currentRule = ruleOfI[j];
 
-            if(currentRule.size() == 1 && isOfVariables(currentRule[0]))
+            if(currentRule.size() == 1 && rules[i].isVariable(currentRule[0]))
             {
                 if(currentRule[0] == rules[i].getVariable())
                 {
@@ -403,7 +393,7 @@ void Grammar::replaceTerminals()
             {
                 for (size_t k = 0; k < ruleOfI[j].size(); k++)
                 {
-                    if(isOfTerminals(ruleOfI[j][k]))
+                    if(rules[i].isTerminal(ruleOfI[j][k]))
                     {
                         std::string temp;
                         temp+= ruleOfI[j][k];
@@ -436,7 +426,7 @@ void Grammar::convertToTwoVariabless()
             {
                 for (size_t k = 0; k < ruleOfI[j].size()-1; k++)
                 {
-                    if(isOfVariables(ruleOfI[j][k]) && isOfVariables(ruleOfI[j][k+1]))
+                    if(rules[i].isVariable(ruleOfI[j][k]) && rules[i].isVariable(ruleOfI[j][k+1]))
                     {
                         std::string newR = "";
                         newR.push_back(ruleOfI[j][k]);
