@@ -17,32 +17,36 @@ constexpr size_t DIGITS_COUNT = 10;
 class Grammar
 {
 public: 
-    void addRule(const ProductionRule&);
-    void addLetterToTerminals(char);
-    void addLetterToTerminals(size_t);
+    static unsigned grammarsCount;
+    std::string getId() const;
+
+    void addLetterToTerminals(char letter);
+    void addLetterToTerminals(size_t index);
+    bool getTerminal(size_t index) const;
+
+
     void addLetterToVariables(char letter);
     void addLetterToVariables(size_t index);
-    void addStartVariable(char);
+    char getUnusedVariable() const;
+    bool getVariable(size_t index) const;
+    void changeVariable(size_t letter, size_t unusedLetter);
+    void getNullableVariables(std::vector<char>& nullableVariables) const;
     
+    void addStartVariable(char letter);
+    char getStartVariable() const;
+
+    void addRule(const ProductionRule& rule);
+    void removeRule(size_t index);
+    std::vector<ProductionRule> getRules() const;
+    bool hasRuleWith(char variable, char letter) const;
+    bool containsEpsilon() const;
+
     void display(std::ostream& s = std::cout) const;
     void clear();
-    std::string getId() const;
-    void removeRule(size_t);
-    bool containsE() const;
-    static unsigned grammarsCount;
-    char getUnusedVariable() const;
-    char getStartVariable() const;
-    bool getVariable(size_t i) const;
-    bool getTerminals(size_t i) const;
-    std::vector<ProductionRule> getRules() const;
-    void changeVariable(size_t letter, size_t unusedLetter);
     bool chomsky() const;
     bool cyk(const std::string& word) const;
-    bool hasRule(char variable, char letter) const;
-    void fixRules();
-    void getNullableVariables(std::vector<char>& nullableVariables) const;
     bool isEmpty() const;
-    
+    void chomskifyRules();
 private:
     std::string id = "";
     bool terminals[TERMINALS_SIZE]{false};
@@ -51,13 +55,16 @@ private:
     std::vector<ProductionRule> rules;
     
     void setId();
-    void eliminateUselessProd();
-    void eliminateEpsilonProd();
-    void eliminateUnitProd();
+
+    void eliminateUselessProduction();
+    void eliminateEpsilonProduction();
+    void eliminateUnitProduction();
     void replaceTerminals();
-    void convertToTwoVars();
-    bool isOfTerminals(char);
-    bool isOfVariables(char);
-    char hasSingleRule(std::string );
+    void convertToTwoVariabless();
+
+    bool isOfTerminals(char letter);
+    bool isOfVariables(char letter);
     void removeVariable(char variable);
+    char getVariableForRule(const std::string& rule);
+    
 };

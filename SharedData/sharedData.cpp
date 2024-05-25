@@ -12,5 +12,5 @@ int SharedData::indexOfId(const std::string &id)
         }
         
     }
-    return -1;
+    throw std::invalid_argument("Id " + id + " not found\n");
 }

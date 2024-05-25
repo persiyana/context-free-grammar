@@ -10,12 +10,15 @@
 #include "../GrammarListManager/grammarListManager.hpp"
 #include "../HelperFunctions/helperFunctions.hpp"
 
-class Engine
-{
+class Engine {
 public:
+    static Engine& getInstance();
     void run();
 
 private:
+    Engine() {}
+    Engine(const Engine&) = delete;
+    Engine& operator=(const Engine&) = delete;
     void help() const;
     FileManager fileManager;
     GrammarListManager grammarListManager;

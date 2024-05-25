@@ -1,133 +1,152 @@
 #include "engine.hpp"
 
+Engine& Engine::getInstance()
+{
+    static Engine instance;
+    return instance;
+}
+
 void Engine::run()
 {
     std::string command, arguments, response = "";
     bool fileIsOpened = false;
+    std::cout << "> ";
     std::cin >> command;
     std::getline(std::cin, arguments);
 
     while(command != "exit")
     {   
-        
-        std::vector<std::string> args = HelperFunctions::split(arguments, ' '); 
-        //without arguments:
-        if(command == "help") 
-        {   
-            help();
-        }
-        //the argument is a file directory:
-        else if(command == "open")
+        try
         {
-            response = fileManager.open(HelperFunctions::uniteVector(args, ' '));
-            fileIsOpened = true;
-        }
-        else if(fileIsOpened)
-        {
+            std::vector<std::string> args = HelperFunctions::split(arguments, ' '); 
             //without arguments:
-            if(command == "close")
-            {
-                response = fileManager.close();
-                fileIsOpened = false;
+            if(command == "help") 
+            {   
+                help();
             }
-            else if(command == "list")
+            //the argument is a file directory:
+            else if(command == "open")
             {
-                response = grammarListManager.list();
-            } 
-            //has either no arguments or arguments for id and filename
-            else if(command == "save")
+                response = fileManager.open(HelperFunctions::uniteVector(args, ' '));
+                fileIsOpened = true;
+            }
+            else if(fileIsOpened)
             {
-                if(args.size() == 0)
+                //without arguments:
+                if(command == "close")
                 {
-                    response = fileManager.save();
+                    response = fileManager.close();
+                    fileIsOpened = false;
+                }
+                else if(command == "list")
+                {
+                    response = grammarListManager.list();
+                } 
+                //has either no arguments or arguments for id and filename
+                else if(command == "save")
+                {
+                    if(args.size() == 0)
+                    {
+                        response = fileManager.save();
+                    }
+                    else
+                    {
+                        std::string id = args[0];
+                        args.erase(args.begin());
+                        response = fileManager.saveGrammar(id, HelperFunctions::uniteVector(args, ' '));
+                    }
+                }
+                //the argument is a file directory:
+                else if(command == "saveas")
+                {
+                    response = fileManager.saveAs(HelperFunctions::uniteVector(args, ' '));
+                }
+                //the argument is one id:
+                else if(command == "print")
+                {
+                    response = fileManager.printGrammar(args[0]);
+                }
+                else if(command == "chomsky")
+                {
+                    response = grammarListManager.chomsky(args[0]);
+                }
+                else if(command == "chomskify")
+                {
+                    response = grammarListManager.chomskify(args[0]);
+                }
+                else if(command == "cyk")
+                {
+                    response = grammarListManager.cyk(args[0], args[1]);
+                }
+                else if(command == "iter")
+                {
+                    response = grammarListManager.iter(args[0]);
+                }
+                else if(command == "empty")
+                {
+                    response = grammarListManager.empty(args[0]);
+                }
+                //the arguments are two id's:
+                else if(command == "union")
+                {
+                    response = grammarListManager.unite(args[0], args[1]);
+                }
+                else if(command == "concat")
+                {
+                    response = grammarListManager.concat(args[0], args[1]);
+                }
+                //the arguments are id and new rule:
+                else if(command == "addRule")
+                {
+                    std::string id = args[0];
+                    std::string variable = args[1];
+                    args.erase(args.begin());
+                    args.erase(args.begin());
+
+                    if(variable.size() > 1) {
+                        throw std::out_of_range("The variables of the rules must contain only one char so this rule will not be added."); 
+                        
+                    }
+
+                    ProductionRule newRule(variable[0], args);
+
+                    response += grammarListManager.addRule(id, newRule);
+                }
+                //the arguments are id and a number of a rule:
+                else if(command == "removeRule")
+                {
+                    //converts args[1] to a size_t object
+                    std::stringstream stream(args[1]);  
+                    size_t ruleIndex;
+                    stream >> ruleIndex;
+
+                    response = grammarListManager.removeRule(args[0], ruleIndex);
                 }
                 else
                 {
-                    std::string id = args[0];
-                    args.erase(args.begin());
-                    response = fileManager.saveGrammar(id, HelperFunctions::uniteVector(args, ' '));
+                    response = command + " is invalid command";
                 }
-            }
-            //the argument is a file directory:
-            else if(command == "saveas")
-            {
-                response = fileManager.saveAs(HelperFunctions::uniteVector(args, ' '));
-            }
-            //the argument is one id:
-            else if(command == "print")
-            {
-                response = fileManager.printGrammar(args[0]);
-            }
-            else if(command == "chomsky")
-            {
-                response = grammarListManager.chomsky(args[0]);
-            }
-            else if(command == "chomskify")
-            {
-                response = grammarListManager.chomskify(args[0]);
-            }
-            else if(command == "cyk")
-            {
-                response = grammarListManager.cyk(args[0], args[1]);
-            }
-            else if(command == "iter")
-            {
-                response = grammarListManager.iter(args[0]);
-            }
-            else if(command == "empty")
-            {
-                response = grammarListManager.empty(args[0]);
-            }
-            //the arguments are two id's:
-            else if(command == "union")
-            {
-                response = grammarListManager.unite(args[0], args[1]);
-            }
-            else if(command == "concat")
-            {
-                response = grammarListManager.concat(args[0], args[1]);
-            }
-            //the arguments are id and new rule:
-            else if(command == "addRule")
-            {
-                std::string id = args[0];
-                std::string variable = args[1];
-                args.erase(args.begin());
-                args.erase(args.begin());
-
-                if(variable.size() > 1) {
-                    response = "The variable for this rule would be only `" + std::string(1, variable[0]) + "`\n";
-                }
-
-                ProductionRule newRule(variable[0], args);
-
-                response += grammarListManager.addRule(id, newRule);
-            }
-            //the arguments are id and a number of a rule:
-            else if(command == "removeRule")
-            {
-                //converts args[1] to a size_t object
-                std::stringstream stream(args[1]);  
-                size_t ruleIndex;
-                stream >> ruleIndex;
-
-                response = grammarListManager.removeRule(args[0], ruleIndex);
             }
             else
             {
-                response = command + " is invalid command";
+                response = "Please open a file before entering another command";
             }
+            
+            
+            std::cout << response << std::endl;
+            std::cout << "> ";
+            std::cin >> command;
+            std::getline(std::cin, arguments);
         }
-        else
+        catch(const std::exception& e)
         {
-            response = "Please open a file before entering another command";
+            std::cerr << e.what() << '\n';
         }
         
         
-        std::cout << response << std::endl;
-        std::cin >> command;
-        std::getline(std::cin, arguments);
     }
+
+    std::cout << "Exiting the program...\n";
 }
 
 void Engine::help() const

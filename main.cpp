@@ -7,12 +7,12 @@ int main()
     
     try
     {
-        Engine engine;
+        Engine& engine = Engine::getInstance();
         engine.run();
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        std::cout << e.what() << '\n';
     }
     catch (...) {
         std::cout << "Default Exception\n";

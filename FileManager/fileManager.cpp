@@ -2,17 +2,15 @@
 
 std::string FileManager::getFileNameFromDir(const std::string& fileDirectoryName) const
 {
-    std::string temp = "";
+    size_t pos = fileDirectoryName.find_last_of("/\\");
 
-    int i = fileDirectoryName.length()-1;
-
-    while(i >= 0 && fileDirectoryName[i] != '\\')
+    if (pos == std::string::npos)
     {
-        temp.push_back(fileDirectoryName[i--]);
+        return fileDirectoryName;
     }
-    std::reverse(temp.begin(), temp.end());
 
-    return temp;
+    return fileDirectoryName.substr(pos + 1);
+
 }
 
 std::string FileManager::open(const std::string& fileDir)
@@ -25,63 +23,96 @@ std::string FileManager::open(const std::string& fileDir)
 
     if (!file.is_open())
     {
-        return "Error opening file: " + fileName;
+        throw std::runtime_error("Error opening file: " + fileName);
     }
     
     std::string line;
     Grammar currentGrammar;
 
     while(std::getline(file, line)){
-        
-        std::vector<std::string> lineVector = HelperFunctions::split(line);
-        if(lineVector[0] == ";")
+        try
         {
-            SharedData::grammarList.push_back(currentGrammar);
-            currentGrammar.clear();
-        }
-        else if(lineVector[0] == "a")
-        {
-            for (size_t i = 1; i < lineVector.size(); i++)
+            std::vector<std::string> lineVector = HelperFunctions::split(line);
+            if(lineVector[0] == ";")
             {
-                if(lineVector[i].length() == 1){
-                    currentGrammar.addLetterToTerminals(lineVector[i][0]);
-                }
-                
+                SharedData::grammarList.push_back(currentGrammar);
+                currentGrammar.clear();
             }
-        }
-        else if(lineVector[0] == "v")
-        {
-            for (size_t i = 1; i < lineVector.size(); i++)
+            else if(lineVector[0] == "a")
             {
-                if(lineVector[i].length() == 1){
-                    currentGrammar.addLetterToVariables(lineVector[i][0]);
-                }
-                
-            }
-        }
-        else if(lineVector[0] == "s")
-        {
-            if(lineVector[1].length() == 1){
-                currentGrammar.addStartVariable(lineVector[1][0]);
-            }
-        }
-
-        else if(lineVector[0][0] == 'r')
-        {
-            ProductionRule currentRule;
-            if(lineVector[1].length() == 1){
-                currentRule.setVariable(lineVector[1][0]);
-            }
-            if(currentRule.getVariable() != '\0')
-            {
-                for (size_t i = 2; i < lineVector.size(); i++)
+                for (size_t i = 1; i < lineVector.size(); i++)
                 {
-                    currentRule.addRule(lineVector[i]);
+                    if(lineVector[i].length() == 1){
+                        currentGrammar.addLetterToTerminals(lineVector[i][0]);
+                    }
+                    else
+                    {
+                        throw std::invalid_argument("`" + lineVector[i] + "` is an invalid terminal and won't be added to the grammar");
+                    }
+                    
                 }
-                
             }
-            currentGrammar.addRule(currentRule);
+            else if(lineVector[0] == "v")
+            {
+                for (size_t i = 1; i < lineVector.size(); i++)
+                {
+                    if(lineVector[i].length() == 1){
+                        currentGrammar.addLetterToVariables(lineVector[i][0]);
+                    }
+                     else
+                    {
+                        throw std::invalid_argument("`" + lineVector[i] + "` is an invalid variable and won't be added to the grammar");
+                    }
+                }
+            }
+            else if(lineVector[0] == "s")
+            {
+                if(lineVector[1].length() == 1){
+                    currentGrammar.addStartVariable(lineVector[1][0]);
+                }
+                else
+                {
+                    throw std::invalid_argument("`" + lineVector[1] + "` is an invalid variable and won't be added to the grammar");
+                }
+            }
+
+            else if(lineVector[0][0] == 'r')
+            {
+                ProductionRule currentRule;
+                if(lineVector[1].length() == 1){
+                    currentRule.setVariable(lineVector[1][0]);
+                }
+                if(currentRule.getVariable() != '\0')
+                {
+                    for (size_t i = 2; i < lineVector.size(); i++)
+                    {
+                        currentRule.addRule(lineVector[i]);
+                    }
+                    
+                }
+                else
+                {
+                    std::string currentRuleAsString = "";
+                    for (size_t i = 0; i < lineVector.size(); i++)
+                    {
+                        currentRuleAsString += lineVector[i]+ " ";
+                    }
+                    
+                    throw std::invalid_argument("The rule `" + currentRuleAsString + "` will not be added to the grammar");
+                }
+                currentGrammar.addRule(currentRule);
+            }
+            else
+            {
+                throw std::invalid_argument("`" + lineVector[0] + "` is invalid line start");
+            }
         }
+        catch(const std::exception& e)
+        {
+            std::cout << e.what() << '\n';
+        }
+            
+        
     }
     
     file.close();
@@ -115,7 +146,7 @@ std::string FileManager::saveAs(const std::string& fileDir) const
     std::ofstream file(fileDir);
     if (!file.is_open())
 	{
-		return "File is not open\n";
+		throw std::runtime_error("File is not open\n");
 	}
     display(file);
     file.close();
@@ -132,34 +163,23 @@ std::string FileManager::saveGrammar(const std::string& id, const std::string& f
 {
     int index = SharedData::indexOfId(id);
     
-    if(index == -1) 
-    {
-        return "Id not found" + '\n';
-    }
-    else{
+    
         std::ofstream file(fileDir);
         if (!file.is_open())
         {
-            return "File is not open\n";
+            throw std::runtime_error("File is not open\n");
         }
         SharedData::grammarList[index].display(file);
         file << std::endl << ';';
         file.close();
         return "Successfully saved " + getFileNameFromDir(fileDir) + '\n';
-    }
+    
 }
 
 std::string FileManager::printGrammar(const std::string& id) const
 {
     int index = SharedData::indexOfId(id);
     
-    if(index == -1) 
-    {
-        return "Id not found";
-    }
-    else
-    {
-        SharedData::grammarList[index].display();
-        return "";
-    }
+    SharedData::grammarList[index].display();
+    return "";
 }

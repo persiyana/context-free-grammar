@@ -9,7 +9,7 @@
 class GrammarListManager
 {
 private:
-    char unusedVariable(Grammar) const;
+    char unusedVariable(const Grammar& grammar) const;
     void changeVariables(const std::string& id1, const std::string& id2);
 public:
     std::string list() const;
