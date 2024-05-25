@@ -7,18 +7,19 @@
 #include <algorithm>
 #include <unordered_set>
 
-#include "../Rule/rule.hpp"
+#include "../ProductionRule/productionRule.hpp"
+#include "../HelperFunctions/helperFunctions.hpp"
 
-constexpr size_t ALPHABET_SIZE = 36;
+constexpr size_t TERMINALS_SIZE = 36;
 constexpr size_t VARIABLES_SIZE = 26;
 constexpr size_t DIGITS_COUNT = 10;
 
 class Grammar
 {
 public: 
-    void addRule(const Rule&);
-    void addLetterToAlphabet(char);
-    void addLetterToAlphabet(size_t);
+    void addRule(const ProductionRule&);
+    void addLetterToTerminals(char);
+    void addLetterToTerminals(size_t);
     void addLetterToVariables(char letter);
     void addLetterToVariables(size_t index);
     void addStartVariable(char);
@@ -32,11 +33,10 @@ public:
     char getUnusedVariable() const;
     char getStartVariable() const;
     bool getVariable(size_t i) const;
-    bool getAlphabet(size_t i) const;
-    std::vector<Rule> getRules() const;
+    bool getTerminals(size_t i) const;
+    std::vector<ProductionRule> getRules() const;
     void changeVariable(size_t letter, size_t unusedLetter);
     bool chomsky() const;
-    bool stringContainsChar(std::string, char) const;
     bool cyk(const std::string& word) const;
     bool hasRule(char variable, char letter) const;
     void fixRules();
@@ -45,10 +45,10 @@ public:
     
 private:
     std::string id = "";
-    bool alphabet[ALPHABET_SIZE]{false};
+    bool terminals[TERMINALS_SIZE]{false};
     bool variables[VARIABLES_SIZE]{false};
     char start_variable = '\0';
-    std::vector<Rule> rules;
+    std::vector<ProductionRule> rules;
     
     void setId();
     void eliminateUselessProd();
@@ -56,7 +56,7 @@ private:
     void eliminateUnitProd();
     void replaceTerminals();
     void convertToTwoVars();
-    bool isOfAlphabet(char);
+    bool isOfTerminals(char);
     bool isOfVariables(char);
     char hasSingleRule(std::string );
     void removeVariable(char variable);

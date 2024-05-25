@@ -1,20 +1,5 @@
 #include "helperFunctions.hpp"
 
-std::string HelperFunctions::getFileNameFromDir(const std::string& fileDirectory)
-{
-    std::string temp = "";
-
-    int i = fileDirectory.length()-1;
-
-    while(i >= 0 && fileDirectory[i] != '\\')
-    {
-        temp.push_back(fileDirectory[i--]);
-    }
-    std::reverse(temp.begin(), temp.end());
-
-    return temp;
-}
-
 std::vector<std::string> HelperFunctions::split(const std::string& str, char delim )
 {
     std::vector<std::string> result;
@@ -51,4 +36,31 @@ std::string HelperFunctions::uniteVector(const std::vector<std::string>& vect, c
     result << vect[vect.size()-1];
 
     return result.str();
+}
+
+bool HelperFunctions::stringContainsChar(std::string str, char ch) 
+{
+    for (size_t i = 0; i < str.size(); i++)
+    {
+        if(str[i]==ch)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string HelperFunctions::getFileNameFromDir(const std::string& fileDirectoryName)
+{
+    std::string temp = "";
+
+    int i = fileDirectoryName.length()-1;
+
+    while(i >= 0 && fileDirectoryName[i] != '\\')
+    {
+        temp.push_back(fileDirectoryName[i--]);
+    }
+    std::reverse(temp.begin(), temp.end());
+
+    return temp;
 }

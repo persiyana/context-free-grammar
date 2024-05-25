@@ -22,9 +22,9 @@ void Grammar::setId()
 void Grammar::clear()
 {
     id = "";
-    for (size_t i = 0; i < ALPHABET_SIZE; i++)
+    for (size_t i = 0; i < TERMINALS_SIZE; i++)
     {
-        alphabet[i] = false;
+        terminals[i] = false;
         if(i<VARIABLES_SIZE){
             variables[i] = false;
         }
@@ -33,21 +33,21 @@ void Grammar::clear()
     rules.clear();
 }
 
-void Grammar::addLetterToAlphabet(char letter)
+void Grammar::addLetterToTerminals(char letter)
 {
     if (letter >= '0' && letter <= '9')
 	{
-		this->alphabet[letter - '0'] = true;
+		this->terminals[letter - '0'] = true;
 	}
 	else if (letter >= 'a' && letter <= 'z')
 	{
-		this->alphabet[letter - 'a' + DIGITS_COUNT] = true;
+		this->terminals[letter - 'a' + DIGITS_COUNT] = true;
 	}
 }
 
-void Grammar::addLetterToAlphabet(size_t index)
+void Grammar::addLetterToTerminals(size_t index)
 {
-    this->alphabet[index] = true;
+    this->terminals[index] = true;
 }
 
 void Grammar::addLetterToVariables(char letter)
@@ -76,7 +76,7 @@ void Grammar::addStartVariable(char letter)
     setId(); 
 }
 
-void Grammar::addRule(const Rule& rule){
+void Grammar::addRule(const ProductionRule& rule){
     rules.push_back(rule);
 }
 
@@ -84,9 +84,9 @@ void Grammar::display(std::ostream& file) const
 {
 
     file << 'a';
-    for (size_t i = 0; i < ALPHABET_SIZE; i++)
+    for (size_t i = 0; i < TERMINALS_SIZE; i++)
     {
-        if(alphabet[i] )
+        if(terminals[i] )
         {
             char symbol;
             if(i<DIGITS_COUNT)
@@ -165,12 +165,12 @@ bool Grammar::getVariable(size_t i) const
     return variables[i];
 }
 
-bool Grammar::getAlphabet(size_t i) const
+bool Grammar::getTerminals(size_t i) const
 {
-    return alphabet[i];
+    return terminals[i];
 }
 
-std::vector<Rule> Grammar::getRules() const
+std::vector<ProductionRule> Grammar::getRules() const
 {
     return rules;
 }
@@ -225,18 +225,6 @@ bool Grammar::hasRule(char variable, char letter) const
     return false;
 }
 
-bool Grammar::stringContainsChar(std::string str, char ch) const
-{
-    for (size_t i = 0; i < str.size(); i++)
-    {
-        if(str[i]==ch)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool Grammar::cyk(const std::string& word) const
 {
    
@@ -286,7 +274,7 @@ bool Grammar::cyk(const std::string& word) const
                     {
                         if(rulesOfVar[t].size() == 2)
                         {
-                            if(stringContainsChar(table[i][k], rulesOfVar[t][0]) && stringContainsChar(table[k+1][j], rulesOfVar[t][1]) && !stringContainsChar(table[i][j], rules[ruleIndex].getVariable()))
+                            if(HelperFunctions::stringContainsChar(table[i][k], rulesOfVar[t][0]) && HelperFunctions::stringContainsChar(table[k+1][j], rulesOfVar[t][1]) && !HelperFunctions::stringContainsChar(table[i][j], rules[ruleIndex].getVariable()))
                             {
                                 table[i][j].push_back(rules[ruleIndex].getVariable());
                             }
@@ -326,7 +314,7 @@ bool Grammar::isEmpty() const
     Grammar temp = *this;
     temp.eliminateUselessProd();
     
-    std::vector<Rule> tempRules = temp.getRules();
+    std::vector<ProductionRule> tempRules = temp.getRules();
 
     for (size_t i = 0; i < tempRules.size(); i++)
     {
@@ -518,7 +506,7 @@ void Grammar::eliminateUnitProd()
     
 }
 
-bool Grammar::isOfAlphabet(char letter)
+bool Grammar::isOfTerminals(char letter)
 {
     return ((letter>='a' && letter<='z') || (letter>='0' && letter<='9'));
 }
@@ -568,7 +556,7 @@ void Grammar::replaceTerminals()
             {
                 for (size_t k = 0; k < ruleOfI[j].size(); k++)
                 {
-                    if(isOfAlphabet(ruleOfI[j][k]))
+                    if(isOfTerminals(ruleOfI[j][k]))
                     {
                         std::string temp;
                         temp+= ruleOfI[j][k];
@@ -576,7 +564,7 @@ void Grammar::replaceTerminals()
                         if(var==' '){
                             var = getUnusedVariable();
                             addLetterToVariables(var);
-                            Rule newRule(var, ruleOfI[j][k]);
+                            ProductionRule newRule(var, ruleOfI[j][k]);
                             rules.push_back(newRule);
                         }
                         ruleOfI[j][k]=var;
@@ -610,7 +598,7 @@ void Grammar::convertToTwoVars()
                         if(var==' '){
                             var = getUnusedVariable();
                             addLetterToVariables(var);
-                            Rule newRule(var, newR);
+                            ProductionRule newRule(var, newR);
                             rules.push_back(newRule);
                             
                         }

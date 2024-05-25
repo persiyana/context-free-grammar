@@ -5,13 +5,13 @@
 #include <fstream> 
 #include <algorithm>
 
-class Rule
+class ProductionRule
 {
 public:
-    Rule() = default;
-    Rule(char variable, std::vector<std::string> rules);
-    Rule(char, char);
-    Rule(char, std::string);
+    ProductionRule() = default;
+    ProductionRule(char variable, std::vector<std::string> rules);
+    ProductionRule(char, char);
+    ProductionRule(char, std::string);
     void setVariable(char);
     char getVariable() const;
     void addRule(std::string);

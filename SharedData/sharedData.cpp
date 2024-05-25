@@ -1,0 +1,16 @@
+#include "sharedData.hpp"
+
+std::vector<Grammar> SharedData::grammarList;
+
+int SharedData::indexOfId(const std::string &id)
+{
+    for (size_t i = 0; i < grammarList.size(); i++)
+    {
+        if (grammarList[i].getId()==id)
+        {
+            return i;
+        }
+        
+    }
+    return -1;
+}

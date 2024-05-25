@@ -1,9 +1,9 @@
-#include "rule.hpp"
+#include "productionRule.hpp"
 
-Rule::Rule(char variable, std::vector<std::string> rules)
+ProductionRule::ProductionRule(char variable, std::vector<std::string> rules)
 :  variable(variable), rules(rules) //todo validation
 {}
-Rule::Rule(char var, char rule)
+ProductionRule::ProductionRule(char var, char rule)
 {
     std::vector<std::string> rules;
     rules.push_back("");
@@ -11,7 +11,7 @@ Rule::Rule(char var, char rule)
     variable = var;
     this->rules = rules;
 }
-Rule::Rule(char var, std::string rule)
+ProductionRule::ProductionRule(char var, std::string rule)
 {
     std::vector<std::string> rules;
     rules.push_back(rule);
@@ -19,12 +19,12 @@ Rule::Rule(char var, std::string rule)
     this->rules = rules;
 }
 
-char Rule::getVariable() const 
+char ProductionRule::getVariable() const 
 { 
     return variable;
 }
 
-void Rule::setVariable(char letter)
+void ProductionRule::setVariable(char letter)
 {
     if(letter >= 'A' && letter <= 'Z')
     {
@@ -33,7 +33,7 @@ void Rule::setVariable(char letter)
     }
 }
 
-void Rule::addRule(std::string rule) //todo validation
+void ProductionRule::addRule(std::string rule) //todo validation
 {
     rules.push_back(rule);
     if(rule=="epsilon")
@@ -42,7 +42,7 @@ void Rule::addRule(std::string rule) //todo validation
     }
 }
 
-void Rule::display(std::ostream& file) const{
+void ProductionRule::display(std::ostream& file) const{
 
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -51,11 +51,11 @@ void Rule::display(std::ostream& file) const{
 
 }
 
-bool Rule::getHasEpsilon() const{
+bool ProductionRule::getHasEpsilon() const{
     return hasEpsilon;
 }
 
-void Rule::changeVariable(char oldVar, char newVar)
+void ProductionRule::changeVariable(char oldVar, char newVar)
 {
     if(variable == oldVar) 
     {
@@ -76,7 +76,7 @@ void Rule::changeVariable(char oldVar, char newVar)
     
 }
 
-bool Rule::otherRules() const
+bool ProductionRule::otherRules() const
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -102,17 +102,17 @@ bool Rule::otherRules() const
     return true;
 }
 
-bool Rule::isSmallLetterOrNumber(char letter) const
+bool ProductionRule::isSmallLetterOrNumber(char letter) const
 {
     return ((letter >= '0' && letter <='9') || (letter >= 'a' && letter <='z'));
 }
 
-bool Rule::isCapitalLetter(char letter) const
+bool ProductionRule::isCapitalLetter(char letter) const
 {
     return (letter >= 'A' && letter <='Z');
 }
 
-bool Rule::hasLetter(char letter) const
+bool ProductionRule::hasLetter(char letter) const
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -124,24 +124,23 @@ bool Rule::hasLetter(char letter) const
     return false;
 }
 
-std::vector<std::string> Rule::getRules() const
+std::vector<std::string> ProductionRule::getRules() const
 {
     return rules;
 }
 
-void Rule::setRules(std::vector<std::string> newRules)
+void ProductionRule::setRules(std::vector<std::string> newProductionRules)
 {   
-    rules = newRules;
+    rules = newProductionRules;
 }
 
-bool Rule::isNullable(std::vector<char>& nullableVariables) const
+bool ProductionRule::isNullable(std::vector<char>& nullableVariables) const
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
         if (rules[i] == "epsilon")
         {
             return true;
-            break;
         }
 
         bool allNullable = true;
@@ -169,9 +168,8 @@ bool Rule::isNullable(std::vector<char>& nullableVariables) const
     return false;
 }
 
-void Rule::replaceNullable(std::vector<char> &nullableVariables)
+void ProductionRule::replaceNullable(std::vector<char> &nullableVariables)
 {
-
     for (size_t i = 0; i < rules.size(); i++)
     {
         if(rules[i] == "epsilon")
@@ -184,23 +182,21 @@ void Rule::replaceNullable(std::vector<char> &nullableVariables)
             {
                 if (std::find(nullableVariables.begin(), nullableVariables.end(), rules[i][j]) != nullableVariables.end())
                 {
-                    std::string newRule = rules[i];
-                    newRule.erase(newRule.begin()+j);
-                    if (std::find(rules.begin(), rules.end(), newRule) == rules.end())
+                    std::string newProductionRule = rules[i];
+                    newProductionRule.erase(newProductionRule.begin()+j);
+                    if (std::find(rules.begin(), rules.end(), newProductionRule) == rules.end())
                     {
-                        rules.push_back(newRule);
+                        rules.push_back(newProductionRule);
                     }
                     
                 }
-            }
-            
-            
+            }           
         }
     }
     
 }
 
-void Rule::removeVariable(char variable)
+void ProductionRule::removeVariable(char variable)
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -209,5 +205,4 @@ void Rule::removeVariable(char variable)
             rules.erase(rules.begin() + i);
         }
     }
-    
 }
