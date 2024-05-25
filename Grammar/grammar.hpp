@@ -59,6 +59,8 @@ private:
     void replaceTerminals();
     void convertToTwoVariabless();
 
+    bool productContainsValidData(const std::string& product);
+
     void removeVariable(char variable);
     char getVariableForRule(const std::string& rule);
     void getNullableVariables(std::vector<char>& nullableVariables) const;

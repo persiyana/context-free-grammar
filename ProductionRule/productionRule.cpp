@@ -1,7 +1,7 @@
 #include "productionRule.hpp"
 
 //constructors
-ProductionRule::ProductionRule(char letter, std::vector<std::string> initialRules)
+ProductionRule::ProductionRule(char letter, const std::vector<std::string>&  initialRules)
 {
     setVariable(letter);
     setRules(initialRules);
@@ -13,7 +13,7 @@ ProductionRule::ProductionRule(char letter, char rule)
     addRule(std::string(1, rule));
 }
 
-ProductionRule::ProductionRule(char letter, std::string rule)
+ProductionRule::ProductionRule(char letter, const std::string& rule)
 {
     setVariable(letter);
     addRule(rule);
@@ -68,7 +68,7 @@ void ProductionRule::removeVariable(char letter)
 }
 
 //rules
-void ProductionRule::addRule(std::string rule) //validation
+void ProductionRule::addRule(const std::string& rule)
 {
     rules.push_back(rule);
 }
@@ -78,7 +78,7 @@ std::vector<std::string> ProductionRule::getRules() const
     return rules;
 }
 
-void ProductionRule::setRules(std::vector<std::string> newRules)
+void ProductionRule::setRules(const std::vector<std::string>& newRules)
 {
     for (size_t i = 0; i < newRules.size(); i++)
     {
@@ -120,7 +120,7 @@ bool ProductionRule::chomsky() const
     return true;
 }
 
-void ProductionRule::display(std::ostream& out = std::cout) const
+void ProductionRule::display(std::ostream& out) const
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -150,7 +150,7 @@ bool ProductionRule::isVariable(char letter) const
     return (letter >= 'A' && letter <='Z');
 }
 
-bool ProductionRule::isNullable(std::vector<char>& nullableVariables) const
+bool ProductionRule::isNullable(const std::vector<char>& nullableVariables) const
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -184,7 +184,7 @@ bool ProductionRule::isNullable(std::vector<char>& nullableVariables) const
     return false;
 }
 
-void ProductionRule::replaceNullable(std::vector<char>& nullableVariables)
+void ProductionRule::replaceNullable(const std::vector<char>& nullableVariables)
 {
     for (size_t i = 0; i < rules.size(); i++)
     {

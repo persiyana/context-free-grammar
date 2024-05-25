@@ -178,6 +178,28 @@ char Grammar::getStartVariable() const
 
 //rules
 void Grammar::addRule(const ProductionRule& rule){
+    
+    ProductionRule newRule;
+    
+    if(variables[rule.getVariable() - 'A'])
+    {
+        newRule.setVariable(rule.getVariable());
+    }
+    else
+    {
+        throw std::invalid_argument("This grammar does not contain variable " + std::string(1, rule.getVariable()) + "so this rule will not be added to the grammar");
+    }
+
+    std::vector<std::string> newProducts = rule.getRules();
+    for (size_t i = 0; i < newProducts.size(); i++)
+    {
+        if(newProducts[i] == "epsilon" || productContainsValidData(newProducts[i]))
+        {
+            newRule.addRule(newProducts[i]);
+        }
+    }
+    
+    
     rules.push_back(rule);
 }
 
@@ -452,6 +474,21 @@ void Grammar::convertToTwoVariabless()
         rules[i].setRules(ruleOfI);
     }
     
+}
+
+bool Grammar::productContainsValidData(const std::string &product)
+{
+    for (size_t i = 0; i < product.size(); i++)
+    {
+        bool isValidVariable = product[i] >= 'A' && product[i]<= 'Z' && variables[product[i]-'A'];
+        bool isValidTerminalLetter = product[i] >= 'a' && product[i]<= 'z' && terminals[product[i]-'a'+DIGITS_COUNT];
+        bool isValidTerminalDigit = product[i] >= '0' && product[i]<= '9' && terminals[product[i]-'0'];
+        if(!isValidTerminalDigit || !isValidTerminalLetter || !isValidVariable)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 //everything
