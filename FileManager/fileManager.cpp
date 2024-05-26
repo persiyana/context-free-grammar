@@ -23,7 +23,7 @@ std::string FileManager::open(const std::string& fileDir)
 
     if (!file.is_open())
     {
-        throw std::runtime_error("Error opening file: " + fileName);
+        throw std::runtime_error("Error opening file: " + fileName + "\nPlease check for spelling mistakes");
     }
     
     std::string line;

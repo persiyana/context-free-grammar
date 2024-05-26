@@ -82,7 +82,10 @@ void ProductionRule::setRules(const std::vector<std::string>& newRules)
 {
     for (size_t i = 0; i < newRules.size(); i++)
     {
-        addRule(newRules[i]);
+        if(!HelperFunctions::contains<std::vector<std::string>, std::string>(rules, newRules[i]))
+        {
+            addRule(newRules[i]);
+        }
     }
 }
 

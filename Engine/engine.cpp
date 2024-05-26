@@ -6,13 +6,18 @@ Engine& Engine::getInstance()
     return instance;
 }
 
+void Engine::readConsole(std::string& command, std::string& arguments)
+{
+    std::cout << "> ";
+    std::cin >> command;
+    std::getline(std::cin, arguments);
+}
+
 void Engine::run()
 {
     std::string command, arguments, response = "";
     bool fileIsOpened = false;
-    std::cout << "> ";
-    std::cin >> command;
-    std::getline(std::cin, arguments);
+    readConsole(command, arguments);
 
     while(command != "exit")
     {   
@@ -27,6 +32,10 @@ void Engine::run()
             //the argument is a file directory:
             else if(command == "open")
             {
+                if(args.size() <1 )
+                {
+                    throw std::invalid_argument("You should put the diretory you want to open after 'open'");
+                }
                 response = fileManager.open(HelperFunctions::uniteVector(args, ' '));
                 fileIsOpened = true;
             }
@@ -59,46 +68,87 @@ void Engine::run()
                 //the argument is a file directory:
                 else if(command == "saveas")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put the diretory you want to save the grammars after 'saveas'");
+                    }
                     response = fileManager.saveAs(HelperFunctions::uniteVector(args, ' '));
                 }
                 //the argument is one id:
                 else if(command == "print")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put the id of the grammar you want to print after 'print'");
+                    }
                     response = fileManager.printGrammar(args[0]);
                 }
                 else if(command == "chomsky")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put the id of the grammar you want to check after 'chomsky'");
+                    }
+
                     response = grammarListManager.chomsky(args[0]);
                 }
                 else if(command == "chomskify")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put the id of the grammar you want to turn in Chomsky normal form after 'chomskify'");
+                    }
                     response = grammarListManager.chomskify(args[0]);
                 }
                 else if(command == "iter")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put the id of the grammar you want to iterate after 'iter'");
+                    }
                     response = grammarListManager.iter(args[0]);
                 }
                 else if(command == "empty")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put the id of the grammar you want to check after 'empty'");
+                    }
                     response = grammarListManager.empty(args[0]);
                 }
                 //the arguments are id and a word
                 else if(command == "cyk")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put the id of the grammar and a word that you want to check after 'cyk'");
+                    }
                     response = grammarListManager.cyk(args[0], args[1]);
                 }
                 //the arguments are two id's:
                 else if(command == "union")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put two ids of the grammars you want to unite after 'union'");
+                    }
                     response = grammarListManager.unite(args[0], args[1]);
                 }
                 else if(command == "concat")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put two ids of the grammars you want to concatenate after 'concat'");
+                    }
                     response = grammarListManager.concat(args[0], args[1]);
                 }
                 //the arguments are id and new rule:
                 else if(command == "addRule")
                 {
+                    if(args.size() <3 )
+                    {
+                        throw std::invalid_argument("You should put the id of the grammar and a new rule in format 'V P0 P1 P2 ...', \nwhere V is start variable and Pi is a production, you want to add to the rules of the grammar after 'addRule'");
+                    }
                     std::string id = args[0];
                     std::string variable = args[1];
                     args.erase(args.begin()); //removes id from args
@@ -115,11 +165,14 @@ void Engine::run()
                 //the arguments are id and a number of a rule:
                 else if(command == "removeRule")
                 {
+                    if(args.size() <1 )
+                    {
+                        throw std::invalid_argument("You should put the id of the grammar and a rule number that you want to remove after 'removeRule'");
+                    }
                     //converts args[1] to a size_t object
                     std::stringstream stream(args[1]);  
                     size_t ruleIndex;
                     stream >> ruleIndex;
-
                     response = grammarListManager.removeRule(args[0], ruleIndex);
                 }
                 else
@@ -134,13 +187,12 @@ void Engine::run()
             
             
             std::cout << response << std::endl;
-            std::cout << "> ";
-            std::cin >> command;
-            std::getline(std::cin, arguments);
+            readConsole(command, arguments);
         }
         catch(const std::exception& e)
         {
             std::cerr << e.what() << '\n';
+            readConsole(command, arguments);
         }
     }
 

@@ -22,4 +22,5 @@ private:
     void help() const;
     FileManager fileManager;
     GrammarListManager grammarListManager;
+    void readConsole(std::string& command, std::string& arguments);
 };

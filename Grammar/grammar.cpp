@@ -252,6 +252,7 @@ void Grammar::chomskifyRules()
     setId();
 }
 
+// if a rule have an epsilon production and it is not the start symbol, then removes it
 void Grammar::eliminateEpsilonProduction()
 {
     std::vector<char> nullableVariables;
@@ -271,6 +272,8 @@ void Grammar::eliminateEpsilonProduction()
     }
 }
 
+// the productions of type ‘A -> B’ are called unit productions and if we want to remove them, then we must replace 'B' with its own productions
+// if we have rules 'X -> Y' and 'Y -> a' then the grammar without useless procudtion will be 'X -> a'
 void Grammar::eliminateUnitProduction()
 {
     for (size_t i = 0; i < rules.size(); i++)
@@ -292,12 +295,14 @@ void Grammar::eliminateUnitProduction()
                 {
                     char variable = ruleOfI[j][0];
                     int indexOfVar = 0;
+                    //finds the rule in wich the variable is the unit production of ruleOfI[j] 
                     while(rules[indexOfVar].getVariable() != variable && indexOfVar < rules.size())
                     {
                         indexOfVar++;
                     }
                     if(indexOfVar < rules.size())
                     {
+                        //adds the products of the variable of the unit poduction to ruleOfI[j] and removes the unit production
                         std::vector<std::string> rulesOfVar = rules[indexOfVar].getRules();
                         ruleOfI.erase(ruleOfI.begin()+j);
                         for (size_t k = 0; k < rulesOfVar.size(); k++)
@@ -315,10 +320,13 @@ void Grammar::eliminateUnitProduction()
     
 }
 
+// remove each production that can never take part in the derivation of any string
 void Grammar::eliminateUselessProduction()
 {
     size_t prev_size = 0;
 
+    // removes rules that can never terminate
+    // for example removes B -> aB | Bb
     do
     {
         prev_size = rules.size();
@@ -329,7 +337,7 @@ void Grammar::eliminateUselessProduction()
             size_t count = 0;
             for (size_t j = 0; j < rulesOfI.size(); j++)
             {
-                if(std::find(rulesOfI[j].begin(), rulesOfI[j].end(), variableOfI) != rulesOfI[j].end())
+                if(HelperFunctions::contains<std::string, char>(rulesOfI[j], variableOfI))
                 {
                     count++;
                 }
@@ -349,6 +357,7 @@ void Grammar::eliminateUselessProduction()
     
     std::vector<char> unreachableVariables;
 
+    // adds to unreachableVariables all variables except the start one
     for (size_t i = 0; i < VARIABLES_SIZE; i++)
     {
         char variable = i+'A';
@@ -359,13 +368,14 @@ void Grammar::eliminateUselessProduction()
     }
     
     
+    //removes all reachable variables from the unreachableVariable array
     prev_size = 0;
     do
     {
         prev_size = unreachableVariables.size();
         for (size_t i = 0; i < rules.size(); i++)
         {
-            if(std::find(unreachableVariables.begin(), unreachableVariables.end(), rules[i].getVariable()) == unreachableVariables.end())
+            if(!HelperFunctions::contains<std::vector<char>, char>(unreachableVariables, rules[i].getVariable()))
             {
                 std::vector<std::string> rulesOfI = rules[i].getRules();
                 for (size_t j = 0; j < rulesOfI.size(); j++)
@@ -391,6 +401,7 @@ void Grammar::eliminateUselessProduction()
     } while (prev_size != unreachableVariables.size());
 
 
+    //removes unreachable variables
     for (size_t i = 0; i < unreachableVariables.size(); i++)
     {
         variables[unreachableVariables[i]-'A'] = false;
@@ -399,6 +410,10 @@ void Grammar::eliminateUselessProduction()
     
 }
 
+// for each rule if one of the productions contains terminal and the length of that production is not 1 then create a new rule
+// production rule X->xY can be decomposed as: 
+//      X->ZY    
+//      Z->x
 void Grammar::replaceTerminals()
 {
     for (size_t i = 0; i < rules.size(); i++)
@@ -432,6 +447,10 @@ void Grammar::replaceTerminals()
     
 }
 
+// for each rule if one of the productions has more than two variables then create a new rule 
+// production rule X->XYZ can be decomposed as: 
+//      X->PZ    
+//      P->XY
 void Grammar::convertToTwoVariabless()
 {
     for (size_t i = 0; i < rules.size(); i++)
@@ -559,8 +578,9 @@ bool Grammar::cyk(const std::string& word) const
     } 
 
     std::string initalValue = "";
-    std::vector<std::vector<std::string> > table(n, std::vector<std::string> (n, initalValue));
+    std::vector<std::vector<std::string>> table(n, std::vector<std::string> (n, initalValue));
 
+    //for each variable A, we check if there is a rule A -> word[i] and if it is so then we push back the variable into the table in position ii
     for (size_t i = 0; i < n; i++)
     {
         for (size_t j = 0; j < VARIABLES_SIZE; j++)
@@ -577,6 +597,7 @@ bool Grammar::cyk(const std::string& word) const
         
     }
 
+    
     for (size_t l = 1; l < n; l++)
     {
         for (size_t i = 0; i < n-l; i++)
@@ -584,6 +605,8 @@ bool Grammar::cyk(const std::string& word) const
             size_t j = i+l;
             for (size_t k = i; k < j; k++)
             {
+               // for each rule A -> BC we check if (i, k) cell contains B and (k + 1, j) cell contains C
+               // if so, we put A in cell (i, j) of our table.
                for (size_t ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++)
                {
                     std::vector<std::string> rulesOfVar = rules[ruleIndex].getRules();
@@ -591,9 +614,9 @@ bool Grammar::cyk(const std::string& word) const
                     {
                         if(rulesOfVar[t].size() == 2)
                         {
-                            if(HelperFunctions::contains(table[i][k], rulesOfVar[t][0]) 
-                                && HelperFunctions::contains(table[k+1][j], rulesOfVar[t][1]) 
-                                && !HelperFunctions::contains(table[i][j], rules[ruleIndex].getVariable()))
+                            if(HelperFunctions::contains<std::string, char>(table[i][k], rulesOfVar[t][0]) 
+                                && HelperFunctions::contains<std::string, char>(table[k+1][j], rulesOfVar[t][1]) 
+                                && !HelperFunctions::contains<std::string, char>(table[i][j], rules[ruleIndex].getVariable()))
                             {
                                 table[i][j].push_back(rules[ruleIndex].getVariable());
                             }
@@ -607,15 +630,8 @@ bool Grammar::cyk(const std::string& word) const
         }
     }
 
-    std::string res = table[0][n-1];
-    for (size_t i = 0; i < res.size(); i++)
-    {
-        if(res[i]==start_variable)
-        {
-            return true;
-        }
-    }
-    return false;
+    // if the start variable is in table[0][n-1] then the grammar recognizes the word
+    return HelperFunctions::contains<std::string, char>(table[0][n-1], start_variable);
 }
 
 bool Grammar::isEmpty() const
