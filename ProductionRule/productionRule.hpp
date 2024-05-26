@@ -28,7 +28,8 @@ public:
 
     void display(std::ostream& out = std::cout) const;
     
-    bool hasLetter(char letter) const;
+    //checks if there is a product that contains only that letter
+    bool hasLetterAsProduct(char letter) const;
     
     bool isTerminal(char letter) const;
     bool isVariable(char letter) const;

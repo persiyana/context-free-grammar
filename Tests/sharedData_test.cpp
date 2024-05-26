@@ -4,7 +4,7 @@
 #include "../SharedData/sharedData.hpp"
 #include "../Grammar/grammar.hpp"
 
-TEST_CASE("returns correct id")
+TEST_CASE("Returns correct id")
 {
     Grammar g1;
     g1.addLetterToTerminals('a');
@@ -21,10 +21,15 @@ TEST_CASE("returns correct id")
 
     SharedData::grammarList.push_back(g1);
     SharedData::grammarList.push_back(g2);
-
-    std::cout << g1.getId();
-
-    CHECK_EQ(SharedData::indexOfId(g1.getId()), 0);
-    CHECK_EQ(SharedData::indexOfId(g2.getId()), 1);
-    CHECK_THROWS_AS(SharedData::indexOfId("2AA"), std::invalid_argument);
+    
+    SUBCASE("indexOfId(id) returns correct values")
+    {
+        CHECK_EQ(SharedData::indexOfId(g1.getId()), 0);
+        CHECK_EQ(SharedData::indexOfId(g2.getId()), 1);  
+    }
+    
+    SUBCASE("indexOfId(id) should throw std::invalid_argument exception for id that is not in grammarList")
+    {
+        CHECK_THROWS_AS(SharedData::indexOfId("2AA"), std::invalid_argument);
+    }
 }

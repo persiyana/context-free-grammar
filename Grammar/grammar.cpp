@@ -229,7 +229,7 @@ bool Grammar::hasRuleWith(char variable, char letter) const //example A -> a
     {
         if(rules[i].getVariable() == variable)
         {
-            return rules[i].hasLetter(letter);
+            return rules[i].hasLetterAsProduct(letter);
         }
     }
     return false;

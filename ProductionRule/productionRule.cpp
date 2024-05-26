@@ -45,7 +45,7 @@ void ProductionRule::changeVariable(char oldVariable, char newVariable)
     {
         for (size_t j = 0; j < rules[i].size(); j++)
         {
-            if(rules[i][j] == oldVariable)
+            if(rules[i][j] == oldVariable && rules[i] != "epsilon")
             {
                 rules[i][j] = newVariable;
             }
@@ -58,9 +58,16 @@ void ProductionRule::removeVariable(char letter)
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
-        if(HelperFunctions::contains<std::string, char>(rules[i], letter))
+        if(rules[i] == std::string(1, letter))
         {
             rules.erase(rules.begin() + i);
+        }
+        for (size_t j = 0; j < rules[i].size(); j++)
+        {
+           if(rules[i][j]==letter)
+           {
+                rules[i].erase(rules[i].begin() +j);
+           }
         }
     }
 }
@@ -128,7 +135,7 @@ void ProductionRule::display(std::ostream& out) const
     }
 }
 
-bool ProductionRule::hasLetter(char letter) const //rule with only letter // X -> letter
+bool ProductionRule::hasLetterAsProduct(char letter) const //rule with only letter // X -> letter
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
