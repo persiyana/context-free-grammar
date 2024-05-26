@@ -2,7 +2,7 @@
 
 #include "./Engine/engine.hpp"
 
-int main()
+int program()
 {
     
     try
@@ -17,5 +17,5 @@ int main()
     catch (...) {
         std::cout << "Default Exception\n";
     }
+    return 0;
 }
-
