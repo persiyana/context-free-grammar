@@ -74,10 +74,6 @@ void Engine::run()
                 {
                     response = grammarListManager.chomskify(args[0]);
                 }
-                else if(command == "cyk")
-                {
-                    response = grammarListManager.cyk(args[0], args[1]);
-                }
                 else if(command == "iter")
                 {
                     response = grammarListManager.iter(args[0]);
@@ -85,6 +81,11 @@ void Engine::run()
                 else if(command == "empty")
                 {
                     response = grammarListManager.empty(args[0]);
+                }
+                //the arguments are id and a word
+                else if(command == "cyk")
+                {
+                    response = grammarListManager.cyk(args[0], args[1]);
                 }
                 //the arguments are two id's:
                 else if(command == "union")
@@ -100,17 +101,16 @@ void Engine::run()
                 {
                     std::string id = args[0];
                     std::string variable = args[1];
-                    args.erase(args.begin());
-                    args.erase(args.begin());
+                    args.erase(args.begin()); //removes id from args
+                    args.erase(args.begin()); //removes variable from args
 
                     if(variable.size() > 1) {
                         throw std::out_of_range("The variables of the rules must contain only one char so this rule will not be added."); 
-                        
                     }
 
                     ProductionRule newRule(variable[0], args);
 
-                    response += grammarListManager.addRule(id, newRule);
+                    response = grammarListManager.addRule(id, newRule);
                 }
                 //the arguments are id and a number of a rule:
                 else if(command == "removeRule")
@@ -142,8 +142,6 @@ void Engine::run()
         {
             std::cerr << e.what() << '\n';
         }
-        
-        
     }
 
     std::cout << "Exiting the program...\n";

@@ -38,7 +38,7 @@ std::string FileManager::open(const std::string& fileDir)
                 SharedData::grammarList.push_back(currentGrammar);
                 currentGrammar.clear();
             }
-            else if(lineVector[0] == "a")
+            else if(lineVector[0] == "t")
             {
                 for (size_t i = 1; i < lineVector.size(); i++)
                 {
@@ -111,8 +111,6 @@ std::string FileManager::open(const std::string& fileDir)
         {
             std::cout << e.what() << '\n';
         }
-            
-        
     }
     
     file.close();
@@ -132,13 +130,11 @@ std::string FileManager::close()
 
 void FileManager::display(std::ostream& file) const
 {
-
     for (size_t i = 0; i < SharedData::grammarList.size(); i++)
     {
         SharedData::grammarList[i].display(file);
         file << std::endl << ";" << std::endl;
     }
-   
 }
 
 std::string FileManager::saveAs(const std::string& fileDir) const
@@ -163,17 +159,16 @@ std::string FileManager::saveGrammar(const std::string& id, const std::string& f
 {
     int index = SharedData::indexOfId(id);
     
-    
-        std::ofstream file(fileDir);
-        if (!file.is_open())
-        {
-            throw std::runtime_error("File is not open\n");
-        }
-        SharedData::grammarList[index].display(file);
-        file << std::endl << ';';
-        file.close();
-        return "Successfully saved " + getFileNameFromDir(fileDir) + '\n';
-    
+    std::ofstream file(fileDir);
+    if (!file.is_open())
+    {
+        throw std::runtime_error("File is not open\n");
+    }
+    SharedData::grammarList[index].display(file);
+    file << std::endl << ';';
+    file.close();
+    return "Successfully saved " + getFileNameFromDir(fileDir) + '\n';
+
 }
 
 std::string FileManager::printGrammar(const std::string& id) const

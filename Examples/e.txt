@@ -1,4 +1,4 @@
-a a b
+t a b
 v A S B C
 s S
 r0 S abS abA abB

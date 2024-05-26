@@ -92,16 +92,12 @@ void Grammar::getNullableVariables(std::vector<char>& nullableVariables) const
         for (size_t i = 0; i < rules.size(); i++)
         {
             char variable = rules[i].getVariable();
-            if (std::find(nullableVariables.begin(), nullableVariables.end(), variable) == nullableVariables.end()) {
-                if (rules[i].isNullable(nullableVariables)) {
-                    nullableVariables.push_back(variable);
-                }
+            if(!HelperFunctions::contains<std::vector<char>, char>(nullableVariables, variable) && rules[i].isNullable(nullableVariables)) 
+            {
+                nullableVariables.push_back(variable);
             }
         }
-        
-
     } while (nullableVariables.size() != previous_size);
-    
 }
 
 char Grammar::getVariableForRule(const std::string& rule)
@@ -208,7 +204,7 @@ void Grammar::removeRule(size_t index)
     
     if(rules.size() < index)
     {
-        throw std::invalid_argument( "Grammar " + id + " does not contain rule " + std::string(1, index));
+        throw std::invalid_argument( "Grammar " + id + " does not contain rule with number " + std::string(1, index));
     }
     else
     {
@@ -232,7 +228,7 @@ std::vector<ProductionRule> Grammar::getRules() const
     return rules;
 }
 
-bool Grammar::hasRuleWith(char variable, char letter) const
+bool Grammar::hasRuleWith(char variable, char letter) const //example A -> a
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -245,7 +241,6 @@ bool Grammar::hasRuleWith(char variable, char letter) const
 }
 
 //chomsky normal form
-
 void Grammar::chomskifyRules()
 {
     eliminateEpsilonProduction();
@@ -255,6 +250,69 @@ void Grammar::chomskifyRules()
     convertToTwoVariabless();
 
     setId();
+}
+
+void Grammar::eliminateEpsilonProduction()
+{
+    std::vector<char> nullableVariables;
+    getNullableVariables(nullableVariables);
+
+    for (int i = 0; i < rules.size(); i++)
+    {
+        if(rules[i].getRules().size() == 1 && rules[i].getRules()[0] == "epsilon")
+        {
+            rules.erase(rules.begin() + i);
+            i--;
+        }
+        else
+        {
+            rules[i].replaceNullable(nullableVariables);
+        }
+    }
+}
+
+void Grammar::eliminateUnitProduction()
+{
+    for (size_t i = 0; i < rules.size(); i++)
+    {
+        std::vector<std::string> ruleOfI = rules[i].getRules();
+
+        for (size_t j = 0; j < ruleOfI.size(); j++)
+        {
+            std::string currentRule = ruleOfI[j];
+
+            if(currentRule.size() == 1 && rules[i].isVariable(currentRule[0]))
+            {
+                if(currentRule[0] == rules[i].getVariable())
+                {
+                    ruleOfI.erase(ruleOfI.begin()+j);
+                    j--;
+                }
+                else
+                {
+                    char variable = ruleOfI[j][0];
+                    int indexOfVar = 0;
+                    while(rules[indexOfVar].getVariable() != variable && indexOfVar < rules.size())
+                    {
+                        indexOfVar++;
+                    }
+                    if(indexOfVar < rules.size())
+                    {
+                        std::vector<std::string> rulesOfVar = rules[indexOfVar].getRules();
+                        ruleOfI.erase(ruleOfI.begin()+j);
+                        for (size_t k = 0; k < rulesOfVar.size(); k++)
+                        {
+                            ruleOfI.push_back(rulesOfVar[k]);
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        rules[i].setRules(ruleOfI);
+    }
+    
 }
 
 void Grammar::eliminateUselessProduction()
@@ -341,69 +399,6 @@ void Grammar::eliminateUselessProduction()
     
 }
 
-void Grammar::eliminateEpsilonProduction()
-{
-    std::vector<char> nullableVariables;
-    getNullableVariables(nullableVariables);
-    for (int i = 0; i < rules.size(); i++)
-    {
-        if(rules[i].getRules().size() == 1 && rules[i].getRules()[0] == "epsilon")
-        {
-            rules.erase(rules.begin() + i);
-            i--;
-        }
-        else
-        {
-            rules[i].replaceNullable(nullableVariables);
-        }
-    }
-    
-}
-
-void Grammar::eliminateUnitProduction()
-{
-    for (size_t i = 0; i < rules.size(); i++)
-    {
-        std::vector<std::string> ruleOfI = rules[i].getRules();
-
-        for (size_t j = 0; j < ruleOfI.size(); j++)
-        {
-            std::string currentRule = ruleOfI[j];
-
-            if(currentRule.size() == 1 && rules[i].isVariable(currentRule[0]))
-            {
-                if(currentRule[0] == rules[i].getVariable())
-                {
-                    ruleOfI.erase(ruleOfI.begin()+j);
-                    j--;
-                }
-                else
-                {
-                    char variable = ruleOfI[j][0];
-                    int indexOfVar = 0;
-                    while(rules[indexOfVar].getVariable() != variable && indexOfVar < rules.size())
-                    {
-                        indexOfVar++;
-                    }
-                    if(indexOfVar < rules.size())
-                    {
-                        std::vector<std::string> rulesOfVar = rules[indexOfVar].getRules();
-                        ruleOfI.erase(ruleOfI.begin()+j);
-                        for (size_t k = 0; k < rulesOfVar.size(); k++)
-                        {
-                            ruleOfI.push_back(rulesOfVar[k]);
-                        }
-                        
-                    }
-                }
-            }
-        }
-
-        rules[i].setRules(ruleOfI);
-    }
-    
-}
-
 void Grammar::replaceTerminals()
 {
     for (size_t i = 0; i < rules.size(); i++)
@@ -476,6 +471,7 @@ void Grammar::convertToTwoVariabless()
     
 }
 
+//other
 bool Grammar::productContainsValidData(const std::string &product)
 {
     for (size_t i = 0; i < product.size(); i++)
@@ -491,11 +487,10 @@ bool Grammar::productContainsValidData(const std::string &product)
     return true;
 }
 
-//everything
 void Grammar::display(std::ostream& file) const
 {
 
-    file << 'a';
+    file << 't';
     for (size_t i = 0; i < TERMINALS_SIZE; i++)
     {
         if(terminals[i] )
@@ -550,7 +545,6 @@ bool Grammar::chomsky() const
 
 bool Grammar::cyk(const std::string& word) const
 {
-   
     size_t n = word.size();
     if(n==0)
     {
@@ -635,7 +629,7 @@ bool Grammar::isEmpty() const
     {
         if(tempRules[i].getVariable() == temp.getStartVariable())
         {
-            return false;
+            return false; 
         }
     }
     return true;

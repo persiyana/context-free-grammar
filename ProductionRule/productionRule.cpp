@@ -60,7 +60,7 @@ void ProductionRule::removeVariable(char letter)
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
-        if(std::find(rules[i].begin(), rules[i].end(), letter) != rules[i].end())
+        if(HelperFunctions::contains<std::string, char>(rules[i], letter))
         {
             rules.erase(rules.begin() + i);
         }
@@ -128,7 +128,7 @@ void ProductionRule::display(std::ostream& out) const
     }
 }
 
-bool ProductionRule::hasLetter(char letter) const
+bool ProductionRule::hasLetter(char letter) const //rule with only letter // X -> letter
 {
     for (size_t i = 0; i < rules.size(); i++)
     {
@@ -160,6 +160,8 @@ bool ProductionRule::isNullable(const std::vector<char>& nullableVariables) cons
         }
 
         bool allNullable = true;
+
+        //check whether all of the chars of the rule are nullable variables
         for (size_t j = 0; j < rules[i].size(); j++)
         {
             bool isFound = false;   
@@ -196,11 +198,13 @@ void ProductionRule::replaceNullable(const std::vector<char>& nullableVariables)
         {
             for (size_t j = 0; j < rules[i].size(); j++)
             {
-                if (std::find(nullableVariables.begin(), nullableVariables.end(), rules[i][j]) != nullableVariables.end())
+                // if rules[i][j] is nullable variable then replace it with a permutation of rules[i] 
+                // if S -> ABCd and A, B and C are nullable, then the rule will become S -> ABCd | ABd | ACd | BCd | Ad  |  Bd  |Cd | d
+                if(HelperFunctions::contains<std::vector<char>, char> (nullableVariables, rules[i][j]))
                 {
                     std::string newProductionRule = rules[i];
                     newProductionRule.erase(newProductionRule.begin()+j);
-                    if (std::find(rules.begin(), rules.end(), newProductionRule) == rules.end())
+                    if(!HelperFunctions::contains<std::vector<std::string>, std::string>(rules, newProductionRule)) //does not contain
                     {
                         rules.push_back(newProductionRule);
                     }

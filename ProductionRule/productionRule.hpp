@@ -5,6 +5,8 @@
 #include <fstream> 
 #include <algorithm>
 
+#include "../HelperFunctions/helperFunctions.hpp"
+
 class ProductionRule
 {
 public:

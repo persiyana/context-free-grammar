@@ -37,8 +37,3 @@ std::string HelperFunctions::uniteVector(const std::vector<std::string>& vect, c
 
     return result.str();
 }
-
-bool HelperFunctions::contains(const std::string& str, char ch)
-{
-    return std::find(str.begin(), str.end(), ch) != str.end();
-}

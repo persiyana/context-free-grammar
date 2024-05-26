@@ -31,9 +31,7 @@ std::string GrammarListManager::removeRule(const std::string &id, size_t number)
 char GrammarListManager::unusedVariable(const Grammar &grammar) const
 {
     char unused = ' ';
-
     unused = grammar.getUnusedVariable();
-
     return unused;
 }
 
@@ -70,6 +68,11 @@ void GrammarListManager::changeVariables(const std::string &id1, const std::stri
     }
 }
 
+// for union the two grammars should not have the same set of variables
+// the new grammar should have both sets of variables and both sets of terminals
+// the start of the new grammar should be an unused variable
+// the new grammar must have a rule that from its start variable should lead to the start variable of grammar 1 or the start variable of grammar 2
+// the new grammar must contain all the rules of grammar 1 and grammar 2
 std::string GrammarListManager::unite(const std::string &id1, const std::string &id2) // U
 {
     int index1 = SharedData::indexOfId(id1);
@@ -133,6 +136,11 @@ std::string GrammarListManager::unite(const std::string &id1, const std::string 
     return newId;
 }
 
+// for concatenation the two grammars should not have the same set of variables
+// the new grammar should have both sets of variables and both sets of terminals
+// the start of the new grammar should be an unused variable
+// the new grammar must have a rule that from its start variable should lead to the start variable of grammar 1 and the start variable of grammar 2// S0 -> S1S2
+// the new grammar must contain all the rules of grammar 1 and grammar 2
 std::string GrammarListManager::concat(const std::string &id1, const std::string &id2) //.
 {
     int index1 = SharedData::indexOfId(id1);
@@ -167,7 +175,6 @@ std::string GrammarListManager::concat(const std::string &id1, const std::string
         start += SharedData::grammarList[index1].getStartVariable();
         start += SharedData::grammarList[index2].getStartVariable();
         rules.push_back(start);
-        rules.push_back("epsilon");
         ProductionRule newRule(unusedVar, rules);
         concatenated.addRule(newRule);
         newId = concatenated.getId();
@@ -214,7 +221,6 @@ std::string GrammarListManager::cyk(const std::string &id, const std::string &wo
 
     if (!SharedData::grammarList[index].chomsky())
     {
-
         std::string newId = chomskify(id);
         index = SharedData::indexOfId(newId);
     }
@@ -229,6 +235,10 @@ std::string GrammarListManager::cyk(const std::string &id, const std::string &wo
     }
 }
 
+// the new grammar should have the same set of variables and same set of terminals
+// the start of the new grammar should be an unused variable
+// the new grammar must have a rule that from its start variable should lead to the start variable of grammar 1 and its own start variable or epsilon // S0 -> S1S0 | epsilon
+// the new grammar must contain all the rules of grammar 1
 std::string GrammarListManager::iter(const std::string &id) //*
 {
     int index = SharedData::indexOfId(id);
@@ -274,6 +284,10 @@ std::string GrammarListManager::empty(const std::string &id) const
     }
 }
 
+// new grammar should contain all the data from the initial grammar
+// it should have new start variable that is not in the initial grammar
+// the new start variable should lead to the start variable of the inital grammar
+// all of the rules should be changed
 std::string GrammarListManager::chomskify(const std::string &id)
 {
     int index = SharedData::indexOfId(id);

@@ -1,4 +1,4 @@
-a c b d
+t c b d
 v S A B C
 s S
 r0 S ABCd
@@ -6,26 +6,26 @@ r1 A BC
 r2 B bB epsilon
 r3 C cC epsilon
 ;
-a a b
+t a b
 v A S B
 s S
 r0 S ASB
 r1 A aAS a epsilon
 r2 B SbS A bb
 ;
-a a b
+t a b
 v M S
 s R
 r0 S aSb epsilon
 r1 M aMaa
 ;
-a a b
+t a b
 v S X
 s S
 r0 S aXb
 r1 X a b
 ;
-a a b
+t a b
 v S A B X R
 s S
 r0 S a XA AX b epsilon
@@ -34,7 +34,7 @@ r2 B AX b a
 r3 X a
 r4 R XB
 ;
-a a b
+t a b
 v S A B C
 s S 
 r0 S AB BC
