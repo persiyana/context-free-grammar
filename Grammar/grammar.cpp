@@ -2,7 +2,6 @@
 
 unsigned Grammar::grammarsCount = 0;
 
-//id
 std::string Grammar::getId() const 
 {
     return id;
@@ -20,7 +19,6 @@ void Grammar::setId()
     }
 }
 
-//terminals
 void Grammar::addLetterToTerminals(char letter)
 {
     if (letter >= '0' && letter <= '9')
@@ -47,7 +45,6 @@ bool Grammar::getTerminal(size_t index) const
     return terminals[index];
 }
 
-//variables
 void Grammar::addLetterToVariables(char letter)
 {
     if (letter >= 'A' && letter <= 'Z')
@@ -149,7 +146,6 @@ void Grammar::changeVariable(size_t letter, size_t unusedLetter)
     
 }
 
-//start variable
 void Grammar::addStartVariable(char letter)
 {
     grammarsCount++;
@@ -172,7 +168,6 @@ char Grammar::getStartVariable() const
     return start_variable;
 }
 
-//rules
 void Grammar::addRule(const ProductionRule& rule){
     
     ProductionRule newRule;
@@ -240,7 +235,6 @@ bool Grammar::hasRuleWith(char variable, char letter) const //example A -> a
     return false;
 }
 
-//chomsky normal form
 void Grammar::chomskifyRules()
 {
     eliminateEpsilonProduction();
@@ -490,7 +484,6 @@ void Grammar::convertToTwoVariabless()
     
 }
 
-//other
 bool Grammar::productContainsValidData(const std::string &product)
 {
     for (size_t i = 0; i < product.size(); i++)

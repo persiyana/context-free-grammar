@@ -5,7 +5,6 @@
 #include <fstream> 
 #include <string> 
 #include <algorithm>
-#include <unordered_set>
 
 #include "../ProductionRule/productionRule.hpp"
 #include "../HelperFunctions/helperFunctions.hpp"

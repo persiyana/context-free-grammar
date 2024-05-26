@@ -15,7 +15,14 @@ namespace HelperFunctions
     template <typename T, typename P>
     bool contains(const T& arr, const P& element)
     {
-        return std::find(arr.begin(), arr.end(), element) != arr.end();
+        for (size_t i = 0; i < arr.size(); i++)
+        {
+            if (arr[i] == element)
+            {
+                return true;
+            }           
+        }
+        return false;
     }
 
 }

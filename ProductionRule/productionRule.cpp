@@ -1,6 +1,5 @@
 #include "productionRule.hpp"
 
-//constructors
 ProductionRule::ProductionRule(char letter, const std::vector<std::string>&  initialRules)
 {
     setVariable(letter);
@@ -19,7 +18,6 @@ ProductionRule::ProductionRule(char letter, const std::string& rule)
     addRule(rule);
 }
 
-//variable
 void ProductionRule::setVariable(char letter)
 {
     if(letter >= 'A' && letter <= 'Z')
@@ -67,7 +65,6 @@ void ProductionRule::removeVariable(char letter)
     }
 }
 
-//rules
 void ProductionRule::addRule(const std::string& rule)
 {
     rules.push_back(rule);

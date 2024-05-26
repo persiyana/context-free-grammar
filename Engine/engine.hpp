@@ -16,7 +16,7 @@ public:
     void run();
 
 private:
-    Engine() {}
+    Engine() = default;
     Engine(const Engine&) = delete;
     Engine& operator=(const Engine&) = delete;
     void help() const;

@@ -26,4 +26,5 @@ TEST_CASE("returns correct id")
 
     CHECK_EQ(SharedData::indexOfId(g1.getId()), 0);
     CHECK_EQ(SharedData::indexOfId(g2.getId()), 1);
+    CHECK_THROWS_AS(SharedData::indexOfId("2AA"), std::invalid_argument);
 }

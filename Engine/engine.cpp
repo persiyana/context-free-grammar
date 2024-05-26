@@ -24,12 +24,10 @@ void Engine::run()
         try
         {
             std::vector<std::string> args = HelperFunctions::split(arguments, ' '); 
-            //without arguments:
             if(command == "help") 
             {   
                 help();
             }
-            //the argument is a file directory:
             else if(command == "open")
             {
                 if(args.size() <1 )
@@ -41,7 +39,6 @@ void Engine::run()
             }
             else if(fileIsOpened)
             {
-                //without arguments:
                 if(command == "close")
                 {
                     response = fileManager.close();
@@ -51,7 +48,6 @@ void Engine::run()
                 {
                     response = grammarListManager.list();
                 } 
-                //has either no arguments or arguments for id and filename
                 else if(command == "save")
                 {
                     if(args.size() == 0)
@@ -65,7 +61,6 @@ void Engine::run()
                         response = fileManager.saveGrammar(id, HelperFunctions::uniteVector(args, ' '));
                     }
                 }
-                //the argument is a file directory:
                 else if(command == "saveas")
                 {
                     if(args.size() <1 )
@@ -74,7 +69,6 @@ void Engine::run()
                     }
                     response = fileManager.saveAs(HelperFunctions::uniteVector(args, ' '));
                 }
-                //the argument is one id:
                 else if(command == "print")
                 {
                     if(args.size() <1 )
@@ -116,7 +110,6 @@ void Engine::run()
                     }
                     response = grammarListManager.empty(args[0]);
                 }
-                //the arguments are id and a word
                 else if(command == "cyk")
                 {
                     if(args.size() <1 )
@@ -125,7 +118,6 @@ void Engine::run()
                     }
                     response = grammarListManager.cyk(args[0], args[1]);
                 }
-                //the arguments are two id's:
                 else if(command == "union")
                 {
                     if(args.size() <1 )
@@ -142,7 +134,6 @@ void Engine::run()
                     }
                     response = grammarListManager.concat(args[0], args[1]);
                 }
-                //the arguments are id and new rule:
                 else if(command == "addRule")
                 {
                     if(args.size() <3 )
@@ -151,8 +142,8 @@ void Engine::run()
                     }
                     std::string id = args[0];
                     std::string variable = args[1];
-                    args.erase(args.begin()); //removes id from args
-                    args.erase(args.begin()); //removes variable from args
+                    args.erase(args.begin()); 
+                    args.erase(args.begin()); 
 
                     if(variable.size() > 1) {
                         throw std::out_of_range("The variables of the rules must contain only one char so this rule will not be added."); 
@@ -162,7 +153,6 @@ void Engine::run()
 
                     response = grammarListManager.addRule(id, newRule);
                 }
-                //the arguments are id and a number of a rule:
                 else if(command == "removeRule")
                 {
                     if(args.size() <1 )
@@ -193,6 +183,9 @@ void Engine::run()
         {
             std::cerr << e.what() << '\n';
             readConsole(command, arguments);
+        }
+        catch (...) {
+            std::cout << "Default Exception\n";
         }
     }
 
