@@ -1,13 +1,13 @@
 t a b
-v S A B C
-s S 
+v A B C S
+s S
 r0 S AB BC
 r1 A BA a
 r2 B CC b
 r3 C AB a
 ;
 t a b
-v A S B C
+v A B C S
 s S
 r0 S abS abA abB
 r1 A cd
