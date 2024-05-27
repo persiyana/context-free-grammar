@@ -5,6 +5,11 @@
 
 TEST_CASE("ProductionRule constructors are working properly")
 {
+    SUBCASE("Default constructor")
+    {
+        ProductionRule case0;
+        CHECK_EQ(case0.getVariable(), '\0');
+    }
     SUBCASE("Arguments are char and char")
     {
         ProductionRule case1('A', 'a');

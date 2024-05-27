@@ -132,6 +132,10 @@ void Grammar::changeVariable(size_t letter, size_t unusedLetter)
     variables[unusedLetter] = true;
     char oldVar = letter+'A';
     char newVar = unusedLetter + 'A';
+    if(start_variable == oldVar)
+    {
+        start_variable = newVar;
+    }
     for (size_t i = 0; i < rules.size(); i++)
     {
         rules[i].changeVariable(oldVar, newVar);
