@@ -74,7 +74,10 @@ void ProductionRule::removeVariable(char letter)
 
 void ProductionRule::addRule(const std::string& rule)
 {
-    rules.push_back(rule);
+    if(rule!="")
+    {
+        rules.push_back(rule);
+    }
 }
 
 std::vector<std::string> ProductionRule::getRules() const
@@ -84,6 +87,7 @@ std::vector<std::string> ProductionRule::getRules() const
 
 void ProductionRule::setRules(const std::vector<std::string>& newRules)
 {
+    rules.clear();
     for (size_t i = 0; i < newRules.size(); i++)
     {
         if(!HelperFunctions::contains<std::vector<std::string>, std::string>(rules, newRules[i]))

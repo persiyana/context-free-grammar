@@ -1,16 +1,6 @@
 t a b
-v S A B C
+v S T
 s S 
-r0 S AB BC epsilon
-r1 A BA a
-r2 B CC b
-r3 C AB a
-;
-t a b
-v A S B C
-s S
-r0 S abS abA abB
-r1 A cd
-r2 B aB
-r3 C dc
+r0 S bSa epsilon TS
+r1 T bTa ab
 ;
