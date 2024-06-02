@@ -102,7 +102,7 @@ std::string FileManager::open(const std::string& fileDir)
                 }
                 currentGrammar.addRule(currentRule);
             }
-            else
+            else if(lineVector[0][0] != '/' && lineVector[0][1] != '/')
             {
                 throw std::invalid_argument("`" + lineVector[0] + "` is invalid line start");
             }
