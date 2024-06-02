@@ -1,7 +1,32 @@
+//example for conversion to Chomsky normal form
 t a b
-// comment
-v S T
+v A B S
 s S 
-r0 S bSa epsilon TS
-r1 T bTa ab
+r0 S ASB 
+r1 A aAS a epsilon
+r2 B SbS A bb
+;
+//example of a grammar that is in Chomsky normal form
+t a b
+v A B S
+s S 
+r0 S AS SB
+r1 A a
+r2 B b 
+;
+//example for cyk algoritm where 'baaba' is a word that is recognized by the grammar and 'bb' is not
+t a b
+v A B C S
+s S 
+r0 S AB BC
+r1 A BA a 
+r2 B CC b 
+r3 C AB a 
+;
+//empty CFG
+t a b
+v A S
+s S 
+r0 S S
+r1 A a
 ;
